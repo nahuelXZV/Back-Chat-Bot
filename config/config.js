@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config();
 
 const config = {
   port: process.env.PORT || 3000,
@@ -8,6 +8,8 @@ const config = {
   PORT: process.env.PORT || 3000,
 
   FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:8080',
+
+  KEY_FACEBOOK: process.env.KEY_FACEBOOK || 'key',
 
   DB_CONNECTION: process.env.DB_CONNECTION || 'postgres',
   DB_HOST: process.env.DB_HOST || 'localhost',
@@ -24,6 +26,6 @@ const config = {
   SMTP_PORT: process.env.SMTP_PORT || '',
   SMTP_EMAIL: process.env.SMTP_EMAIL || '',
   SMTP_PASSWORD: process.env.SMTP_PASSWORD || '',
-}
+};
 
 module.exports = config;
