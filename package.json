@@ -1,5 +1,5 @@
 {
-  "name": "express",
+  "name": "chat_bot",
   "version": "1.0.0",
   "description": "Plantilla generica para hacer una API REST con NodeJS",
   "main": "index.js",

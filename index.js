@@ -28,5 +28,5 @@ app.use(boomErrorHandler);
 app.use(errorHandler);
 
 app.listen(port, () =>
-  console.log(`Example app listening on port http://localhost:${port}`)
+  console.log(`${config.APP_NAME} listening on port ${config.APP_URL}`)
 );

@@ -53,19 +53,6 @@ class UserController {
         }
       }
     );
-    /*
-    try {
-      await axios({
-        url: 'https://graph.facebook.com/v14.0/me/messages',
-        params: {
-          access_token: config.KEY_FACEBOOK,
-        },
-        method: 'POST',
-        data: request_body,
-      });
-    } catch (error) {
-      boom.badImplementation(error);
-    }*/
   }
 }
 
