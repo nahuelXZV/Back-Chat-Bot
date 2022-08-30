@@ -1,5 +1,6 @@
 const boom = require('@hapi/boom');
 const config = require('../../config/config');
+const request = require('request');
 
 class UserController {
   constructor() {}
@@ -35,9 +36,27 @@ class UserController {
         text: messageText,
       },
     };
+
+    request(
+      {
+        uri: 'https://graph.facebook.com/v14.0/me/messages',
+        qs: { access_token: config.KEY_FACEBOOK },
+        method: 'POST',
+        json: request_body,
+      },
+      (err, res, body) => {
+        if (!err) {
+          console.log('Mensaje enviado!');
+        } else {
+          console.error('No se puedo enviar el mensaje:' + err);
+          boom.badImplementation(error);
+        }
+      }
+    );
+    /*
     try {
       await axios({
-        url: 'https://graph.facebook.com/v6.2/me/messages',
+        url: 'https://graph.facebook.com/v14.0/me/messages',
         params: {
           access_token: config.KEY_FACEBOOK,
         },
@@ -46,7 +65,7 @@ class UserController {
       });
     } catch (error) {
       boom.badImplementation(error);
-    }
+    }*/
   }
 }
 

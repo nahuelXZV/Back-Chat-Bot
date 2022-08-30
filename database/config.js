@@ -19,10 +19,8 @@ module.exports = {
     dialect: typeDatabase,
     dialectOptions: {
       ssl: {
-        rejectUnauthorized: false
-      }
-    }
-  }
+        rejectUnauthorized: false,
+      },
+    },
+  },
 };
-
-
