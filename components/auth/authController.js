@@ -9,7 +9,7 @@ const controller = new UserController();
 
 class AuthController {
   async getUser(email, password) {
-    const user = await controller.findByEmail(email); // find user by email
+    const user = await controller.findByEmailAuth(email); // find user by email
     if (!user) {
       throw boom.unauthorized();
     }
@@ -34,7 +34,7 @@ class AuthController {
   }
 
   async sendRecovery(email) {
-    const user = await controller.findByEmail(email);
+    const user = await controller.findByEmailAuth(email);
     if (!user) {
       throw boom.unauthorized();
     }

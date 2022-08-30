@@ -24,7 +24,6 @@ router.post('/', async (req, res, next) => {
       req.body.entry.forEach(async (entry) => {
         entry.messaging.forEach(async (event) => {
           if (event.message) {
-            console.log(event.message);
             await controller.process_event(event);
           }
         });

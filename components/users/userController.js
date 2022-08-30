@@ -52,6 +52,13 @@ class UserController {
     return rta;
   }
 
+  async findByEmailAuth(email) {
+    const rta = await models.User.findOne({
+      where: { email },
+    });
+    return rta;
+  }
+
   async getAll() {
     const users = await models.User.findAll({
       attributes: { exclude: ['password', 'recoveryToken'] },
