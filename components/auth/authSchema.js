@@ -10,5 +10,5 @@ const loginSchema = validator.object({
 });
 
 module.exports = {
-  loginSchema
+  loginSchema,
 };

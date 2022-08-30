@@ -28,6 +28,7 @@ router.post('/', async (req, res, next) => {
           }
         });
       });
+      console.log(req.body);
       res.status(200).send('EVENT_RECEIVED');
     } else {
       res.sendStatus(404);

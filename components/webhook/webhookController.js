@@ -37,7 +37,7 @@ class UserController {
     };
     try {
       await axios({
-        url: 'https://graph.facebook.com/v6.2/me/messages',
+        url: 'https://graph.facebook.com/v14.0/me/messages',
         params: {
           access_token: config.KEY_FACEBOOK,
         },

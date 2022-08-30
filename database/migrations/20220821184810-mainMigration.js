@@ -2,7 +2,6 @@
 
 const { USER_TABLE, UserSchema } = require('../models/userModel');
 
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(USER_TABLE, UserSchema);
@@ -14,5 +13,5 @@ module.exports = {
     await queryInterface.dropTable(USER_TABLE);
 
     // Add others migrations here
-  }
+  },
 };

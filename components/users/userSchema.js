@@ -9,7 +9,7 @@ const role = validator.string().min(5);
 const addUserSchema = validator.object({
   email: email.required(),
   password: password.required(),
-  role: role.required()
+  role: role.required(),
 });
 
 const editUserSchema = validator.object({
@@ -19,11 +19,11 @@ const editUserSchema = validator.object({
 });
 
 const getUserSchema = validator.object({
-  id: id.required()
+  id: id.required(),
 });
 
 module.exports = {
   addUserSchema,
   editUserSchema,
-  getUserSchema
+  getUserSchema,
 };
