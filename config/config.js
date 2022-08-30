@@ -10,6 +10,7 @@ const config = {
   FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:8080',
 
   KEY_FACEBOOK: process.env.KEY_FACEBOOK || 'key',
+  KEY_VALIDATION: process.env.KEY_VALIDATION || 'key',
 
   DB_CONNECTION: process.env.DB_CONNECTION || 'postgres',
   DB_HOST: process.env.DB_HOST || 'localhost',
