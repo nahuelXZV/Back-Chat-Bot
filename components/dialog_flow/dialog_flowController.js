@@ -58,7 +58,7 @@ async function detectIntent(
   } else {
     console.log(`  No intent matched.`);
   }
-  return result;
+  return result.queryResult.fulfillmentText;
 }
 
 async function executeQueries(projectId, sessionId, queries, languageCode) {
