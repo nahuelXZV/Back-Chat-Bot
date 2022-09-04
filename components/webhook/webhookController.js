@@ -18,9 +18,15 @@ class UserController {
         senderId,
         message.text
       );
-      var response = {
-        text: res,
-      };
+      if (res) {
+        var response = {
+          text: res,
+        };
+      } else {
+        var response = {
+          text: 'mensaje recibido',
+        };
+      }
     } else if (messageAttachments) {
       var response = {
         text: 'Enviaste un adjunto',

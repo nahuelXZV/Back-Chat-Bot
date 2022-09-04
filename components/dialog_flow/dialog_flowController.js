@@ -51,6 +51,7 @@ async function detectIntent(
   }
   const responses = await sessionClient.detectIntent(request);
   const result = responses[0].queryResult;
+  consolo.log('result', result);
 
   if (result.intent) {
     console.log(`  Intent: ${result.intent.displayName}`);
