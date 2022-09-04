@@ -13,7 +13,6 @@ class webhookController {
     const message = event.message;
     const messageAttachments = event.attachments;
     if (message.text) {
-      console.log('Mensaje recibido: ' + message.text);
       const res = await dialogflow
         .detectIntent(config.PROYECT_ID, senderId, message.text, '', 'es')
         .catch((error) => {
@@ -26,7 +25,7 @@ class webhookController {
         };
       } else {
         var response = {
-          text: 'mensaje recibido',
+          text: 'Puedes reescribir tu pregunta?',
         };
       }
     } else if (messageAttachments) {

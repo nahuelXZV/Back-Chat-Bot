@@ -11,7 +11,6 @@ async function detectIntent(
   contexts,
   languageCode = 'es'
 ) {
-  console.log(query);
   const sessionClient = new dialogflow.SessionsClient();
   const sessionPath = sessionClient.projectAgentSessionPath(
     projectId,
@@ -35,7 +34,6 @@ async function detectIntent(
   }
 
   const responses = await sessionClient.detectIntent(request);
-  //consolo.log('result', responses);
   const result = responses[0].queryResult;
 
   if (result.intent) {
@@ -44,7 +42,6 @@ async function detectIntent(
     console.log(`  No intent matched.`);
   }
   if (result.fulfillmentText) {
-    console.log(`  Fulfillment: ${result.fulfillmentText}`);
     return result.fulfillmentText;
   }
   return 'Sin respuesta';
