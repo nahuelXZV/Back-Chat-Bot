@@ -1,5 +1,5 @@
 const {
-  logError,
+  logError, 
   errorHandler,
   boomErrorHandler,
   ormErrorHandler,

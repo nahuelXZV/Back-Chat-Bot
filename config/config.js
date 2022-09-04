@@ -11,6 +11,10 @@ const config = {
   KEY_FACEBOOK: process.env.KEY_FACEBOOK || 'key',
   KEY_VALIDATION: process.env.KEY_VALIDATION || 'key',
 
+  PROYECT_ID: process.env.PROYECT_ID || '',
+  GOOGLE_APPLICATION_CREDENTIALS:
+    process.env.GOOGLE_APPLICATION_CREDENTIALS || '',
+
   DB_CONNECTION: process.env.DB_CONNECTION || 'postgres',
   DB_HOST: process.env.DB_HOST || 'localhost',
   DB_PORT: process.env.DB_PORT || '',
