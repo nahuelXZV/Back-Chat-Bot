@@ -2,6 +2,7 @@ const boom = require('@hapi/boom');
 const config = require('../../config/config');
 const request = require('request');
 const dialogflow = require('../dialog_flow/dialog_flowController');
+const { error } = require('../../network/response');
 
 class webhookController {
   constructor() {}
@@ -13,13 +14,12 @@ class webhookController {
     const messageAttachments = event.attachments;
     if (message.text) {
       console.log('Mensaje recibido: ' + message.text);
-      const res = await dialogflow.detectIntent(
-        config.PROYECT_ID,
-        senderId,
-        message.text,
-        '',
-        'es'
-      );
+      const res = await dialogflow
+        .detectIntent(config.PROYECT_ID, senderId, message.text, '', 'es')
+        .catch((error) => {
+          console.log(error);
+          this.sendMessage(senderId, 'No se pudo procesar el mensaje');
+        });
       console.log('res:  ', res);
       if (res) {
         var response = {

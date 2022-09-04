@@ -35,7 +35,7 @@ async function detectIntent(
   }
 
   const responses = await sessionClient.detectIntent(request);
-  consolo.log('result', responses);
+  //consolo.log('result', responses);
   const result = responses[0].queryResult;
 
   if (result.intent) {
