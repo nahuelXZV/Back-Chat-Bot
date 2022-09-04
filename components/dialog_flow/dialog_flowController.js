@@ -36,14 +36,17 @@ async function detectIntent(
 
   const responses = await sessionClient.detectIntent(request);
   //consolo.log('result', responses);
-  const result = responses[0].queryResult;
+  const result = responses.queryResult;
 
   if (result.intent) {
     console.log(`  Intent: ${result.intent.displayName}`);
   } else {
     console.log(`  No intent matched.`);
   }
-  return result.queryResult.fulfillmentText;
+  if (result.queryResult.fulfillmentText) {
+    return result.queryResult.fulfillmentText;
+  }
+  return 'Sin respuesta';
 }
 
 async function executeQueries(projectId, sessionId, queries, languageCode) {
