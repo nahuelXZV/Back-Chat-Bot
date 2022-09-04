@@ -3,32 +3,33 @@ const config = require('../../config/config');
 const request = require('request');
 const dialogflow = require('../dialog_flow/dialog_flowController');
 
-class UserController {
+class webhookController {
   constructor() {}
 
-  process_event(event) {
+  async process_event(event) {
     // Capturamos los datos del que genera el evento y el mensaje
     const senderId = event.sender.id;
     const message = event.message;
     const messageAttachments = event.attachments;
     if (message.text) {
       console.log('Mensaje recibido: ' + message.text);
-      dialogflow
-        .detectIntent(config.PROYECT_ID, senderId, message.text, '', 'es')
-        .then((data) => {
-          console.log('data:  ', data);
-          var response = {
-            text: data,
-          };
-          this.sendMessage(senderId, response.text);
-        })
-        .catch((error) => {
-          console.log(error);
-          var response = {
-            text: 'mensaje recibido',
-          };
-          this.sendMessage(senderId, response.text);
-        });
+      const res = await dialogflow.detectIntent(
+        config.PROYECT_ID,
+        senderId,
+        message.text,
+        '',
+        'es'
+      );
+      console.log('res:  ', res);
+      if (res) {
+        var response = {
+          text: res,
+        };
+      } else {
+        var response = {
+          text: 'mensaje recibido',
+        };
+      }
     } else if (messageAttachments) {
       var response = {
         text: 'Enviaste un adjunto',
@@ -70,4 +71,4 @@ class UserController {
   }
 }
 
-module.exports = UserController;
+module.exports = webhookController;
