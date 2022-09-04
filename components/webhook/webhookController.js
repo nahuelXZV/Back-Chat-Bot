@@ -1,6 +1,7 @@
 const boom = require('@hapi/boom');
 const config = require('../../config/config');
 const request = require('request');
+const dialogflow = require('../dialog_flow/dialog_flowController');
 
 class UserController {
   constructor() {}
@@ -12,8 +13,13 @@ class UserController {
     const messageAttachments = event.attachments;
 
     if (message.text) {
+      const res = dialogflow.detectIntent(
+        config.PROYECT_ID,
+        senderId,
+        message.text
+      );
       var response = {
-        text: 'Enviaste este mensaje: ' + message.text,
+        text: res,
       };
     } else if (messageAttachments) {
       var response = {
