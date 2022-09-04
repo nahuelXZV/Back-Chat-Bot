@@ -12,9 +12,11 @@ class UserController {
     const message = event.message;
     const messageAttachments = event.attachments;
     if (message.text) {
+      console.log('Mensaje recibido: ' + message.text);
       dialogflow
         .detectIntent(config.PROYECT_ID, senderId, message.text, '', 'es')
         .then((data) => {
+          console.log('data:  ', data);
           var response = {
             text: data,
           };
