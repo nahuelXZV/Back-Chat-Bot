@@ -43,9 +43,9 @@ async function detectIntent(
   } else {
     console.log(`  No intent matched.`);
   }
-  if (result.queryResult.fulfillmentText) {
-    console.log(`  Fulfillment: ${result.queryResult.fulfillmentText}`);
-    return result.queryResult.fulfillmentText;
+  if (result.fulfillmentText) {
+    console.log(`  Fulfillment: ${result.fulfillmentText}`);
+    return result.fulfillmentText;
   }
   return 'Sin respuesta';
 }
