@@ -18,7 +18,6 @@ class webhookController {
         .detectIntent(config.PROYECT_ID, senderId, message.text, '', 'es')
         .catch((error) => {
           console.log(error);
-          this.sendMessage(senderId, 'No se pudo procesar el mensaje');
         });
       console.log('res:  ', res);
       if (res) {

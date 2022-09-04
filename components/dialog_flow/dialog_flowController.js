@@ -36,7 +36,7 @@ async function detectIntent(
 
   const responses = await sessionClient.detectIntent(request);
   //consolo.log('result', responses);
-  const result = responses.queryResult;
+  const result = responses[0].queryResult;
 
   if (result.intent) {
     console.log(`  Intent: ${result.intent.displayName}`);
@@ -44,6 +44,7 @@ async function detectIntent(
     console.log(`  No intent matched.`);
   }
   if (result.queryResult.fulfillmentText) {
+    console.log(`  Fulfillment: ${result.queryResult.fulfillmentText}`);
     return result.queryResult.fulfillmentText;
   }
   return 'Sin respuesta';
