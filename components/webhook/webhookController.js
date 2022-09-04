@@ -11,22 +11,22 @@ class UserController {
     const senderId = event.sender.id;
     const message = event.message;
     const messageAttachments = event.attachments;
-
     if (message.text) {
-      const res = dialogflow.detectIntent(
-        config.PROYECT_ID,
-        senderId,
-        message.text
-      );
-      if (res) {
-        var response = {
-          text: res,
-        };
-      } else {
-        var response = {
-          text: 'mensaje recibido',
-        };
-      }
+      dialogflow
+        .detectIntent(config.PROYECT_ID, senderId, message.text)
+        .then((data) => {
+          var response = {
+            text: data,
+          };
+          this.sendMessage(senderId, response.text);
+        })
+        .catch((error) => {
+          console.log(error);
+          var response = {
+            text: 'mensaje recibido',
+          };
+          this.sendMessage(senderId, response.text);
+        });
     } else if (messageAttachments) {
       var response = {
         text: 'Enviaste un adjunto',
