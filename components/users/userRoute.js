@@ -14,7 +14,7 @@ const controller = new UserController();
 
 router.get(
   '/',
-  passport.authenticate('jwt', { session: false }), // Middleware de autenticación
+  // passport.authenticate('jwt', { session: false }), // Middleware de autenticación
   async (req, res, next) => {
     try {
       const users = await controller.getAll();
@@ -27,7 +27,7 @@ router.get(
 
 router.get(
   '/:id',
-  passport.authenticate('jwt', { session: false }), // Middleware de autenticación
+  // passport.authenticate('jwt', { session: false }), // Middleware de autenticación
   validatorHandler(getUserSchema, 'params'), // Middleware de validación
   async (req, res, next) => {
     const { id } = req.params; //used for getting the parameter
@@ -58,7 +58,7 @@ router.post(
 
 router.put(
   '/:id',
-  passport.authenticate('jwt', { session: false }),
+  // passport.authenticate('jwt', { session: false }),
   validatorHandler(getUserSchema, 'params'),
   validatorHandler(editUserSchema, 'body'),
   async (req, res, next) => {
@@ -77,7 +77,7 @@ router.put(
 
 router.delete(
   '/:id',
-  passport.authenticate('jwt', { session: false }),
+  // passport.authenticate('jwt', { session: false }),
   validatorHandler(getUserSchema, 'params'),
   async (req, res, next) => {
     const { id } = req.params;

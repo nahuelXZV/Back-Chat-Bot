@@ -1,7 +1,7 @@
 const validator = require('joi');
 
 // List of atributes for user model
-const id = validator.number().integer();
+const id = validator.string();
 const email = validator.string().email();
 const password = validator.string().min(7);
 const role = validator.string().min(5);

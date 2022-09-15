@@ -1,6 +1,7 @@
 const dialogflow = require('@google-cloud/dialogflow');
+const { listenerCount } = require('nodemailer/lib/xoauth2');
 const uuid = require('uuid');
-const config = require('../../config/config');
+const config = require('../config/config');
 
 const PROYECT_ID = config.PROYECT_ID;
 
@@ -37,13 +38,14 @@ async function detectIntent(
   const result = responses[0].queryResult;
 
   if (result.intent) {
-    console.log(`  Intent: ${result.intent.displayName}`);
+    console.log(`Intent: ${result.intent.displayName}`);
   } else {
-    console.log(`  No intent matched.`);
+    console.log(`No intent matched.`);
   }
   if (result.fulfillmentText) {
     return result.fulfillmentText;
   }
+
   return 'Sin respuesta';
 }
 

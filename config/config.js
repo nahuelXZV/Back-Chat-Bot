@@ -15,12 +15,7 @@ const config = {
   GOOGLE_APPLICATION_CREDENTIALS:
     process.env.GOOGLE_APPLICATION_CREDENTIALS || '',
 
-  DB_CONNECTION: process.env.DB_CONNECTION || 'postgres',
-  DB_HOST: process.env.DB_HOST || 'localhost',
-  DB_PORT: process.env.DB_PORT || '',
-  DB_DATABASE: process.env.DB_DATABASE || '',
-  DB_USERNAME: process.env.DB_USERNAME || '',
-  DB_PASSWORD: process.env.DB_PASSWORD || '',
+  DB_URL: process.env.DB_URL || '',
 
   API_KEY: process.env.API_KEY || '',
   JWT_AUTH: process.env.JWT_AUTH || '',
