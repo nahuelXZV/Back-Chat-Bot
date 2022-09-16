@@ -21,8 +21,12 @@ class webhookController {
         .catch((error) => {
           console.log(error);
         });
+
+      // aqui editaremos el mensaje de respuesta
+
       console.log('Respuesta:  ', res);
 
+      //------------------------------------------------
       if (res) {
         var response = {
           text: res,
