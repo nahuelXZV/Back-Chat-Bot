@@ -1,12 +1,17 @@
 const pizza = require('../components/models/pizzaModel');
+const cliente = require('../components/models/clienteModel');
 
 async function intentController(result, senderId) {
   let request_body = {};
   switch (result.intent.displayName) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
-      const res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
       request_body = await request(res, senderId); // enviar el array de pizzas
+      break;
+    case 'datos':
+      res = await datos(result);
+      request_body = await request(res, senderId);
       break;
     default: // enviar el mensaje de respuesta
       request_body = await request(result.fulfillmentText, senderId);
@@ -19,28 +24,22 @@ async function intentController(result, senderId) {
 async function catalogo(response) {
   // buscar en la base de datos mongoose las pizzas
   const dataDB = await pizza.find();
-  // crear un array con los nombres de las pizzas y sus precios
-  /* dataDB.forEach((pizza) => {
-    data.push({
-      title: pizza.nombre,
-      subtitle: pizza.precio,
-      image_url: pizza.imagen,
-      default_action: {
-        type: 'web_url',
-        url: 'https://www.facebook.com/pizzaspizzariasc',
-        messenger_extensions: false,
-        webview_height_ratio: 'tall',
-        fallback_url: 'https://www.facebook.com/pizzaspizzariasc',
-      },
-    });
-    return data;
-  }); */
   let pizzas = '';
   dataDB.forEach((pizza) => {
-    pizzas += `\r\n🍕 *${pizza.nombre}* ${pizza.tamano} a ${pizza.precio} Bs `;
+    pizzas += `\r\n🍕 *${pizza.nombre}* ${pizza.tamano} a ${pizza.precio}Bs. `;
   });
   const res = response.replace('[x]', pizzas + '\r\n');
   return res;
+}
+
+async function datos(response) {
+  if (response.parameters?.person?.name && response.parameters?.phone) {
+    await cliente.create({
+      nombre: response.parameters.person.name.stringValue,
+      telefono: response.parameters.phone.stringValue,
+    });
+  }
+  return response.fulfillmentText;
 }
 
 async function request(res, senderId, type = 'text') {

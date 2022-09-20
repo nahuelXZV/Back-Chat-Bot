@@ -20,10 +20,10 @@ const mySchema = new Schema({
   },
   createdAt: {
     allowNull: false,
-    type: DataTypes.DATE,
+    type: Date,
     field: 'create_at',
-    defaultValue: Sequelize.NOW
-  }
+    defaultValue: Date.now,
+  },
 });
 
 const model = mongoose.model('Satisfaccion', mySchema);

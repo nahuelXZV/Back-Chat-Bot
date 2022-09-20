@@ -3,12 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
-  id_cliente: {
-    allowNull: false, // not null
-    autoIncrement: true,
-    primaryKey: true,
-    type: Number,
-  },
   nombre: {
     allowNull: false,
     type: String,
@@ -26,9 +20,9 @@ const mySchema = new Schema({
   },
   createdAt: {
     allowNull: false,
-    type: DataTypes.DATE,
+    type: Date,
     field: 'create_at',
-    defaultValue: Sequelize.NOW,
+    defaultValue: Date.now,
   },
 });
 

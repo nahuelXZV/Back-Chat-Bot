@@ -16,9 +16,10 @@ const mySchema = new Schema({
     required: true,
   },
   createdAt: {
+    allowNull: false,
     type: Date,
-    required: true,
-    default: Date.now,
+    field: 'create_at',
+    defaultValue: Date.now,
   },
 });
 

@@ -5,16 +5,17 @@ const Schema = mongoose.Schema;
 const mySchema = new Schema({
   pizza: {
     type: mongoose.Types.ObjectId,
-    ref: "Pizza"
+    ref: 'Pizza',
   },
   promocion: {
     type: mongoose.Types.ObjectId,
-    ref: "Promocion"
+    ref: 'Promocion',
   },
   createdAt: {
+    allowNull: false,
     type: Date,
-    required: true,
-    default: Date.now,
+    field: 'create_at',
+    defaultValue: Date.now,
   },
 });
 
