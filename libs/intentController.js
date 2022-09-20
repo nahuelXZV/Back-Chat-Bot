@@ -37,9 +37,9 @@ async function catalogo(response) {
     return data;
   }); */
   dataDB.forEach((pizza) => {
-    data.push(`-${pizza.nombre} a ${pizza.precio}Bs /r/n`);
+    data.push(`\r\n -${pizza.nombre} a ${pizza.precio}Bs`);
   });
-  const res = response.replace('[x]', data.toString());
+  const res = response.replace('[x]', data.toString() + '\r\n');
   return res;
 }
 
