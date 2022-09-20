@@ -6,7 +6,7 @@ async function intentController(result, senderId) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
       const res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
-      request_body = await request(res, senderId, 'card'); // enviar el array de pizzas
+      request_body = await request(res, senderId); // enviar el array de pizzas
       break;
     default: // enviar el mensaje de respuesta
       request_body = await request(result.fulfillmentText, senderId);
