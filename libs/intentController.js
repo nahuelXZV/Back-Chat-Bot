@@ -20,7 +20,6 @@ async function catalogo(response) {
   // buscar en la base de datos mongoose las pizzas
   const dataDB = await pizza.find();
   // crear un array con los nombres de las pizzas y sus precios
-  const data = [];
   /* dataDB.forEach((pizza) => {
     data.push({
       title: pizza.nombre,
@@ -38,8 +37,7 @@ async function catalogo(response) {
   }); */
   let pizzas = '';
   dataDB.forEach((pizza) => {
-    pizzas += `\r\n- ${pizza.nombre} ${pizza.tamano} a ${pizza.precio} Bs `;
-    data.push(`\r\n- ${pizza.nombre} ${pizza.tamano} a ${pizza.precio} Bs `);
+    pizzas += `\r\n🍕 *${pizza.nombre}* ${pizza.tamano} a ${pizza.precio} Bs `;
   });
   const res = response.replace('[x]', pizzas + '\r\n');
   return res;
