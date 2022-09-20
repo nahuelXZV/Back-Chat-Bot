@@ -36,10 +36,12 @@ async function catalogo(response) {
     });
     return data;
   }); */
+  let pizzas = '';
   dataDB.forEach((pizza) => {
+    pizzas += `\r\n- ${pizza.nombre} ${pizza.tamano} a ${pizza.precio} Bs `;
     data.push(`\r\n- ${pizza.nombre} ${pizza.tamano} a ${pizza.precio} Bs `);
   });
-  const res = response.replace('[x]', data.toString() + '\r\n');
+  const res = response.replace('[x]', pizzas + '\r\n');
   return res;
 }
 
