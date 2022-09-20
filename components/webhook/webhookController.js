@@ -40,7 +40,12 @@ class webhookController {
   }
 
   async sendMessage(request_body) {
-    console.log('Enviando mensaje: ' + request_body);
+    if (request_body.message.attachment.payload.elements) {
+      console.log(
+        'Enviando mensaje: ' +
+          request_body.message.attachment.payload.elements[0].title
+      );
+    }
     request(
       {
         uri: 'https://graph.facebook.com/v14.0/me/messages',

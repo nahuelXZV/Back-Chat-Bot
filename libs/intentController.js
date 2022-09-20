@@ -6,10 +6,10 @@ async function intentController(result, senderId) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
       const res = await catalogo(); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
-      request_body = request(res, senderId, 'card'); // enviar el array de pizzas
+      request_body = await request(res, senderId, 'card'); // enviar el array de pizzas
       break;
     default: // enviar el mensaje de respuesta
-      request_body = request(result.fulfillmentText, senderId);
+      request_body = await request(result.fulfillmentText, senderId);
       break;
   }
   return request_body;
@@ -38,7 +38,7 @@ async function catalogo() {
   return data;
 }
 
-function request(res, senderId, type = 'text') {
+async function request(res, senderId, type = 'text') {
   let request_body = {};
   switch (type) {
     case 'card':
