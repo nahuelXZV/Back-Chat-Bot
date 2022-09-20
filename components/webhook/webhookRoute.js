@@ -8,7 +8,7 @@ const controller = new webhookController();
 
 router.get('/', async (req, res, next) => {
   try {
-    if (req.query['hub.verify_token'] === config.KEY_FACEBOOK) {
+    if (req.query['hub.verify_token'] === config.KEY_VALIDATION) {
       res.status(200).send(req.query['hub.challenge']);
     } else {
       res.status(403).send('Error, wrong validation token');
@@ -24,7 +24,9 @@ router.post('/', async (req, res, next) => {
       req.body.entry.forEach(async (entry) => {
         entry.messaging.forEach(async (event) => {
           if (event.message) {
-            await controller.process_event(event);
+            await controller.process_event(event).catch((error) => {
+              next(error);
+            });
           }
         });
       });

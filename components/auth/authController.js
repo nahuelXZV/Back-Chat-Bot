@@ -9,44 +9,47 @@ const controller = new UserController();
 
 class AuthController {
   async getUser(email, password) {
-    const user = await controller.findByEmail(email); // find user by email
+    const user = await controller.findByEmailAuth(email); // find user by email
     if (!user) {
       throw boom.unauthorized();
     }
-    const isMatch = await bcrypt.compare(password, user.password);  // compare password with hash
+    const isMatch = await bcrypt.compare(password, user.password); // compare password with hash
     if (!isMatch) {
-      throw boom.unauthorized();;
+      throw boom.unauthorized();
     }
     return user;
   }
 
   signToken(user) {
-    const payload = {   // payload is the data that will be encrypted
+    const payload = {
+      // payload is the data that will be encrypted
       sub: user.id,
-      role: user.role
-    }
-    const token = jwt.sign(payload, config.JWT_AUTH);   // sign the payload with the secret key
+      role: user.role,
+    };
+    const token = jwt.sign(payload, config.JWT_AUTH); // sign the payload with the secret key
     return {
       user,
-      token
+      token,
     };
   }
 
   async sendRecovery(email) {
-    const user = await controller.findByEmail(email);
+    const user = await controller.findByEmailAuth(email);
     if (!user) {
       throw boom.unauthorized();
     }
     const payload = { sub: user.id };
-    const token = jwt.sign(payload, config.JWT_RECOVERY, { expiresIn: '15min' });
+    const token = jwt.sign(payload, config.JWT_RECOVERY, {
+      expiresIn: '15min',
+    });
     const link = `http://myfrontend.com/recovery?token=${token}`;
     await controller.edit({ recoveryToken: token }, user.id);
     const mail = {
       from: config.smtpEmail,
       to: `${user.email}`,
-      subject: "Email para recuperar contraseña",
+      subject: 'Email para recuperar contraseña',
       html: `<b>Ingresa a este link => ${link}</b>`,
-    }
+    };
     const rta = await this.sendMail(mail);
     return rta;
   }
@@ -73,8 +76,8 @@ class AuthController {
       port: config.SMTP_PORT,
       auth: {
         user: config.smtpEmail,
-        pass: config.smtpPassword
-      }
+        pass: config.smtpPassword,
+      },
     });
     await transporter.sendMail(infoMail);
     return { message: 'mail sent' };

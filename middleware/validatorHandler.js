@@ -8,7 +8,7 @@ function validatorHandler(schema, property) {
       next(boom.badRequest(error)); // Send error to next middleware
     }
     next();
-  }
+  };
 }
 
 module.exports = validatorHandler;
