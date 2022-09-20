@@ -5,7 +5,7 @@ async function intentController(result, senderId) {
   switch (result.intent.displayName) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
-      const res = await catalogo(); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      const res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
       request_body = await request(res, senderId, 'card'); // enviar el array de pizzas
       break;
     default: // enviar el mensaje de respuesta
@@ -16,12 +16,12 @@ async function intentController(result, senderId) {
   return request_body;
 }
 
-async function catalogo() {
+async function catalogo(response) {
   // buscar en la base de datos mongoose las pizzas
   const dataDB = await pizza.find();
   // crear un array con los nombres de las pizzas y sus precios
   const data = [];
-  dataDB.forEach((pizza) => {
+  /* dataDB.forEach((pizza) => {
     data.push({
       title: pizza.nombre,
       subtitle: pizza.precio,
@@ -34,9 +34,13 @@ async function catalogo() {
         fallback_url: 'https://www.facebook.com/pizzaspizzariasc',
       },
     });
+    return data;
+  }); */
+  dataDB.forEach((pizza) => {
+    data.push(`-${pizza.nombre} a ${pizza.precio}Bs /r/n`);
   });
-  // const res = response.replace('[x]', data.toString());
-  return data;
+  const res = response.replace('[x]', data.toString());
+  return res;
 }
 
 async function request(res, senderId, type = 'text') {
