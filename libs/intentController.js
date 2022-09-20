@@ -34,12 +34,20 @@ async function catalogo(response) {
 
 async function datos(response) {
   console.log(response.parameters);
-  console.log(response.parameters?.person?.name);
-  console.log(response.parameters?.phone);
-  if (response.parameters?.person?.name && response.parameters?.phone) {
+  console.log(
+    response.parameters?.fields?.person?.structValue?.fields?.name?.stringValue
+  );
+  console.log(response.parameters?.fields?.phone?.stringValue);
+  if (
+    response.parameters?.fields?.person?.structValue?.fields?.name
+      ?.stringValue &&
+    response.parameters?.fields?.phone?.stringValue
+  ) {
     await cliente.create({
-      nombre: response.parameters.person.name,
-      telefono: response.parameters.phone,
+      nombre:
+        response.parameters?.fields?.person?.structValue?.fields?.name
+          ?.stringValue,
+      telefono: response.parameters?.fields?.phone?.stringValue,
     });
   }
   return response.fulfillmentText;
