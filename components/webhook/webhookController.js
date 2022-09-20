@@ -12,6 +12,7 @@ class webhookController {
     // Capturamos los datos del que genera el evento y el mensaje
     const senderId = event.sender.id;
     const message = event.message;
+    const request_body = {};
     if (message.text) {
       console.log('Mensaje recibido: ' + message.text);
 
@@ -23,36 +24,22 @@ class webhookController {
         });
 
       // aqui editaremos el mensaje de respuesta
-      // const request_body = await intentController(res);
+      request_body = await intentController(res, senderId);
       //------------------------------------------------
-
-      if (res) {
-        var response = {
-          text: res,
-        };
-      } else {
-        var response = {
-          text: 'Puedes reescribir tu pregunta?',
-        };
-      }
     } else {
-      var response = {
-        text: 'No entiendo el mensaje',
+      request_body = {
+        recipient: {
+          id: senderId,
+        },
+        message: {
+          text: 'Lo siento, no entiendo el tipo de archivo que me has enviado. Envíame solo texto.',
+        },
       };
     }
-    this.sendMessage(senderId, response.text);
+    this.sendMessage(request_body);
   }
 
-  async sendMessage(senderId, messageText) {
-    const request_body = {
-      recipient: {
-        id: senderId,
-      },
-      message: {
-        text: messageText,
-      },
-    };
-
+  async sendMessage(request_body) {
     request(
       {
         uri: 'https://graph.facebook.com/v14.0/me/messages',

@@ -42,11 +42,7 @@ async function detectIntent(
   } else {
     console.log(`No intent matched.`);
   }
-  if (result.fulfillmentText) {
-    return result.fulfillmentText;
-  }
-
-  return 'Sin respuesta';
+  return result;
 }
 
 async function executeQueries(projectId, sessionId, queries, languageCode) {

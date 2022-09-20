@@ -5,24 +5,24 @@ const Schema = mongoose.Schema;
 const mySchema = new Schema({
   nombre: {
     allowNull: false,
-    type: DataTypes.STRING,
+    type: String,
     required: true,
   },
   descripcion: {
     allowNull: false,
-    type: DataTypes.STRING,
+    type: String,
     required: false,
   },
   precio: {
-    type: DataTypes.NUMBER,
+    type: Number,
     required: true,
   },
   tamano: {
-    type: DataTypes.STRING,
+    type: String,
     required: true,
   },
   imagen: {
-    type: DataTypes.STRING,
+    type: String,
     required: false,
   },
   createdAt: {

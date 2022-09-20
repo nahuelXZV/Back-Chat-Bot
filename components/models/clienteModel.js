@@ -7,21 +7,21 @@ const mySchema = new Schema({
     allowNull: false, // not null
     autoIncrement: true,
     primaryKey: true,
-    type: DataTypes.INTEGER,
+    type: Number,
   },
   nombre: {
     allowNull: false,
-    type: DataTypes.STRING,
+    type: String,
     unique: true,
   },
   telefono: {
     allowNull: true,
-    type: DataTypes.STRING,
+    type: String,
     unique: true,
   },
   correo: {
     allowNull: true,
-    type: DataTypes.STRING,
+    type: String,
     unique: true,
   },
   createdAt: {
