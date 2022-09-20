@@ -12,6 +12,7 @@ async function intentController(result, senderId) {
       request_body = await request(result.fulfillmentText, senderId);
       break;
   }
+  console.log(request_body);
   return request_body;
 }
 
