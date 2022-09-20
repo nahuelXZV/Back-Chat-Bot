@@ -7,14 +7,19 @@ const mySchema = new Schema({
     allowNull: false, // not null
     autoIncrement: true,
     primaryKey: true,
-    type: DataTypes.INTEGER
+    type: DataTypes.INTEGER,
   },
   nombre: {
     allowNull: false,
     type: DataTypes.STRING,
     unique: true,
   },
-  celular: {
+  telefono: {
+    allowNull: true,
+    type: DataTypes.STRING,
+    unique: true,
+  },
+  correo: {
     allowNull: true,
     type: DataTypes.STRING,
     unique: true,
@@ -23,8 +28,8 @@ const mySchema = new Schema({
     allowNull: false,
     type: DataTypes.DATE,
     field: 'create_at',
-    defaultValue: Sequelize.NOW
-  }
+    defaultValue: Sequelize.NOW,
+  },
 });
 
 const model = mongoose.model('Cliente', mySchema);

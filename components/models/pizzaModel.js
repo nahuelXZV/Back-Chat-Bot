@@ -3,21 +3,27 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
-  name: {
-    type: String,
+  nombre: {
+    allowNull: false,
+    type: DataTypes.STRING,
     required: true,
   },
-  description: {
-    type: String,
+  descripcion: {
+    allowNull: false,
+    type: DataTypes.STRING,
     required: false,
   },
-  price: {
-    type: Number,
+  precio: {
+    type: DataTypes.NUMBER,
     required: true,
   },
-  size: {
-    type: String,
+  tamano: {
+    type: DataTypes.STRING,
     required: true,
+  },
+  imagen: {
+    type: DataTypes.STRING,
+    required: false,
   },
   createdAt: {
     type: Date,

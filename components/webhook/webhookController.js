@@ -1,3 +1,4 @@
+const intentController = require('../../libs/intentController');
 const boom = require('@hapi/boom');
 const config = require('../../config/config');
 const request = require('request');
@@ -11,7 +12,6 @@ class webhookController {
     // Capturamos los datos del que genera el evento y el mensaje
     const senderId = event.sender.id;
     const message = event.message;
-    const messageAttachments = event.attachments;
     if (message.text) {
       console.log('Mensaje recibido: ' + message.text);
 
@@ -23,10 +23,9 @@ class webhookController {
         });
 
       // aqui editaremos el mensaje de respuesta
-
-      console.log('Respuesta:  ', res);
-
+      // const request_body = await intentController(res);
       //------------------------------------------------
+
       if (res) {
         var response = {
           text: res,
@@ -36,10 +35,6 @@ class webhookController {
           text: 'Puedes reescribir tu pregunta?',
         };
       }
-    } else if (messageAttachments) {
-      var response = {
-        text: 'Enviaste un adjunto',
-      };
     } else {
       var response = {
         text: 'No entiendo el mensaje',
