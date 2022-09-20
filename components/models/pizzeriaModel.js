@@ -1,8 +1,8 @@
-const { Model, DataTypes, Sequelize } = require('sequelize');
+const mongoose = require('mongoose');
 
-const PIZZERIA_TABLE = 'pizzeria';
+const Schema = mongoose.Schema;
 
-const PizzeriaSchema = {
+const mySchema = new Schema({
   id: {
     allowNull: false, // not null
     autoIncrement: true,
@@ -30,22 +30,7 @@ const PizzeriaSchema = {
     field: 'create_at',
     defaultValue: Sequelize.NOW
   }
-}
+});
 
-class Pizzeria extends Model {
-  static associate(models) {
-    // associations can be defined here
-  }
-
-  static config(sequelize) {
-    return {
-      sequelize,
-      tableName: PIZZERIA_TABLE,
-      modelName: 'Pizzeria',
-      timestamps: false
-    }
-  }
-}
-
-
-module.exports = { PIZZERIA_TABLE, PizzeriaSchema, Pizzeria }
+const model = mongoose.model('Pizzeria', mySchema);
+module.exports = model;
