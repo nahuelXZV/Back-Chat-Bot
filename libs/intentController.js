@@ -1,15 +1,18 @@
 const pizza = require('../components/models/pizzaModel');
 
 async function intentController(result, senderId) {
+  let request_body = {};
   switch (result.intent.displayName) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
       const res = await catalogo(); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
-      return request(res, senderId, 'card'); // enviar el array de pizzas
-
-    default:
-      return request(result.fulfillmentText, senderId, 'card'); // enviar el mensaje de respuesta
+      request_body = request(res, senderId, 'card'); // enviar el array de pizzas
+      break;
+    default: // enviar el mensaje de respuesta
+      request_body = request(result.fulfillmentText, senderId);
+      break;
   }
+  return request_body;
 }
 
 async function catalogo() {
@@ -32,13 +35,15 @@ async function catalogo() {
     });
   });
   // const res = response.replace('[x]', data.toString());
+  console.log(data);
   return data;
 }
 
-function request(res, senderId, type) {
+function request(res, senderId, type = 'text') {
+  let request_body = {};
   switch (type) {
     case 'card':
-      return (request_body = {
+      request_body = {
         recipient: {
           id: senderId,
         },
@@ -51,20 +56,21 @@ function request(res, senderId, type) {
             },
           },
         },
-      });
+      };
       break;
 
     default:
-      return (request_body = {
+      request_body = {
         recipient: {
           id: senderId,
         },
         message: {
           text: res,
         },
-      });
+      };
       break;
   }
+  return request_body;
 }
 
 module.exports = intentController;
