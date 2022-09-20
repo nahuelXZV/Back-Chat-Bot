@@ -33,10 +33,13 @@ async function catalogo(response) {
 }
 
 async function datos(response) {
+  console.log(response.parameters);
+  console.log(response.parameters?.person?.name);
+  console.log(response.parameters?.phone);
   if (response.parameters?.person?.name && response.parameters?.phone) {
     await cliente.create({
-      nombre: response.parameters.person.name.stringValue,
-      telefono: response.parameters.phone.stringValue,
+      nombre: response.parameters.person.name,
+      telefono: response.parameters.phone,
     });
   }
   return response.fulfillmentText;
