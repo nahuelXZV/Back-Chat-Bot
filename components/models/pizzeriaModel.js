@@ -14,11 +14,11 @@ const mySchema = new Schema({
     type: DataTypes.STRING,
     unique: true,
   },
-  email: {
+  correo: {
     allowNull: false,
     type: DataTypes.STRING,
     unique: true,
-  },  
+  },
   celular: {
     allowNull: false,
     type: DataTypes.STRING,

@@ -7,7 +7,7 @@ const mySchema = new Schema({
     allowNull: false, // not null
     autoIncrement: true,
     primaryKey: true,
-    type: DataTypes.INTEGER
+    type: DataTypes.INTEGER,
   },
   direccion: {
     allowNull: false,
@@ -23,8 +23,8 @@ const mySchema = new Schema({
     allowNull: false,
     type: DataTypes.DATE,
     field: 'create_at',
-    defaultValue: Sequelize.NOW
-  }
+    defaultValue: Sequelize.NOW,
+  },
 });
 
 const model = mongoose.model('Sucursal', mySchema);

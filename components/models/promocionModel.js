@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
-  name: {
+  nombre: {
     type: String,
     required: true,
   },
-  description: {
+  descripcion: {
     type: String,
     required: false,
   },
-  price: {
+  precio: {
     type: Number,
     required: true,
   },
