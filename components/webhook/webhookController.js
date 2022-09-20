@@ -12,7 +12,7 @@ class webhookController {
     // Capturamos los datos del que genera el evento y el mensaje
     const senderId = event.sender.id;
     const message = event.message;
-    const request_body = {};
+    let request_body = {};
     if (message.text) {
       console.log('Mensaje recibido: ' + message.text);
 
