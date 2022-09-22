@@ -5,8 +5,6 @@ const pizzeria = require('../components/models/pizzeriaModel');
 const cliente_pizza = require('../components/models/cliente_pizzaModel');
 const promocion = require('../components/models/promocionModel');
 
-// 107564425413200 my id
-
 async function intentController(result, senderId, idUser) {
   let request_body = {};
   switch (result.intent.displayName) {
@@ -19,34 +17,38 @@ async function intentController(result, senderId, idUser) {
       res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
       request_body = await request(res, senderId); // enviar el array de pizzas
       break;
+    case 'Default Welcome Intent - custom':
+      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      request_body = await request(res, senderId); // enviar el array de pizzas
+      break;
     case 'datos':
-      res = await datos(result, idUser); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await datos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'correo':
-      res = await correos(result, idUser); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await correos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'Satisfaccion':
-      res = await satisfaccion(result, idUser);
+      res = await satisfaccion(result, senderId); // guardar la satisfaccion del cliente
       request_body = await request(res, senderId);
       break;
     case 'pizzaEspecifica':
-      res = await pizzaEspecifica(result, idUser); 
+      res = await pizzaEspecifica(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'precios':
-      res = await precios(result, idUser);
+      res = await precios(result, senderId); // precios de una pizza especifica
       request_body = await request(res, senderId);
       break;
     case 'ubicacion':
-      res = await ubicacion(result.fulfillmentText); 
+      res = await ubicacion(result.fulfillmentText); // ubicacion de la pizzeria
       request_body = await request(res, senderId);
       break;
     case 'promociones':
-        res = await promociones(result.fulfillmentText);  // busca en la BD las promociones y crea un array con los datos
-        request_body = await request(res, senderId); // envia el array de promociones
-        break;
+      res = await promociones(result.fulfillmentText); // busca en la BD las promociones y crea un array con los datos
+      request_body = await request(res, senderId); // envia el array de promociones
+      break;
     default: // enviar el mensaje de respuesta
       request_body = await request(result.fulfillmentText, senderId);
       break;
@@ -68,11 +70,11 @@ async function catalogo(response) {
 async function promociones(response) {
   // buscar en la base de datos mongoose las promociones
   const dataDB = await promocion.find();
-  let promo = '';
-  dataDB.forEach((promocion) => {
-    promo += `\r\n *${promocion.nombre}* \r\n - ${promocion.descripcion}`;
+  let promos = '';
+  dataDB.forEach((promo) => {
+    promos += `\r\n *${promo.nombre}.* \r\n - ${promo.descripcion} \r\n.`;
   });
-  const res = response.replace('[x]', promo + '\r\n');
+  const res = response.replace('[x]', promos + '\r\n');
   return res;
 }
 async function datos(response, idUser) {
