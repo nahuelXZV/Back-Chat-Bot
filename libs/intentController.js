@@ -1,5 +1,6 @@
 const pizza = require('../components/models/pizzaModel');
 const cliente = require('../components/models/clienteModel');
+const Satisfaccion = require('../components/models/satisfaccionModel');
 
 async function intentController(result, senderId) {
   let request_body = {};
@@ -10,7 +11,15 @@ async function intentController(result, senderId) {
       request_body = await request(res, senderId); // enviar el array de pizzas
       break;
     case 'datos':
-      res = await datos(result);
+      res = await datos(result, senderId);
+      request_body = await request(res, senderId);
+      break;
+    case 'correo':
+      res = await correos(result, senderId);
+      request_body = await request(res, senderId);
+      break;
+    case 'Satisfaccion':
+      res = await satisfaccion(result, senderId);
       request_body = await request(res, senderId);
       break;
     default: // enviar el mensaje de respuesta
@@ -32,25 +41,63 @@ async function catalogo(response) {
   return res;
 }
 
-async function datos(response) {
-  console.log(response.parameters);
-  console.log(
-    response.parameters?.fields?.person?.structValue?.fields?.name?.stringValue
-  );
-  console.log(response.parameters?.fields?.phone?.stringValue);
-  if (
-    response.parameters?.fields?.person?.structValue?.fields?.name
-      ?.stringValue &&
-    response.parameters?.fields?.phone?.stringValue
-  ) {
-    await cliente.create({
-      nombre:
-        response.parameters?.fields?.person?.structValue?.fields?.name
-          ?.stringValue,
-      telefono: response.parameters?.fields?.phone?.stringValue,
-    });
+async function datos(response, senderId) {
+  const name =
+    response.parameters?.fields?.person?.structValue?.fields?.name?.stringValue; // nombre del cliente
+  const phone = response.parameters?.fields?.phone?.stringValue; // telefono del cliente
+  const person = await cliente.findOne({ senderId }); // buscar en la base de datos si el cliente ya existe
+
+  if (name && phone) {
+    if (person) {
+      // si existe actualizar el telefono
+      await cliente.updateOne({ telefono: phone, senderId: senderId });
+    } else {
+      // si no existe crear un nuevo cliente
+      await cliente.create({
+        nombre: name,
+        telefono: phone,
+        senderId: senderId,
+      });
+    }
   }
-  return response.fulfillmentText;
+  return response.fulfillmentText; // enviar el mensaje de respuesta
+}
+
+async function correos(response, senderId) {
+  const email = response.parameters?.fields?.email?.stringValue; // nombre del cliente
+  const person = await cliente.findOne({ senderId }); // buscar en la base de datos si el cliente ya existe
+  if (email) {
+    if (person) {
+      // si existe actualizar el telefono
+      await cliente.updateOne({ correo: email });
+    } else {
+      await cliente.create({
+        // guardar en la base de datos el nombre y el telefono del cliente
+        correo: email,
+        senderId: senderId,
+      });
+    }
+  }
+  return response.fulfillmentText; // enviar el mensaje de respuesta
+}
+
+async function satisfaccion(response, senderId) {
+  const satisfaccion = response.parameters?.fields?.satisfaccion?.stringValue; // nombre del cliente
+  const person = await cliente.findOne({ senderId }); // buscar en la base de datos si el cliente ya existe
+  if (satisfaccion) {
+    if (person) {
+      await Satisfaccion.create({
+        opinion: satisfaccion,
+        cliente_id: person._id,
+      });
+    } else {
+      await Satisfaccion.create({
+        // guardar en la base de datos el nombre y el telefono del cliente
+        opinion: email,
+      });
+    }
+  }
+  return response.fulfillmentText; // enviar el mensaje de respuesta
 }
 
 async function request(res, senderId, type = 'text') {

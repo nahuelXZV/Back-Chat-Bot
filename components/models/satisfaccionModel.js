@@ -3,12 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
-  id: {
-    allowNull: false, // not null
-    autoIncrement: true,
-    primaryKey: true,
-    type: Number
-  },
   opinion: {
     allowNull: false,
     type: String,
@@ -16,7 +10,7 @@ const mySchema = new Schema({
   },
   cliente_id: {
     allowNull: false,
-    type: Number
+    type: Number,
   },
   createdAt: {
     allowNull: false,

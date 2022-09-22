@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
   nombre: {
-    allowNull: false,
+    allowNull: true,
     type: String,
     unique: true,
   },
@@ -17,6 +17,10 @@ const mySchema = new Schema({
     allowNull: true,
     type: String,
     unique: true,
+  },
+  senderId: {
+    allowNull: false,
+    type: Number,
   },
   createdAt: {
     allowNull: false,
