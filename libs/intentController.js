@@ -122,16 +122,13 @@ async function ubicacion(response) {
 }
 
 async function pizzaEspecifica(response, idUser) {
-  console.log(response.parameters?.fields?.TipoPizza);
-  const pizzaDF = response.parameters?.fields?.TipoPizza?.stringValue;
-  console.log(pizzaDF);
-  // encontrar una pizza por medio del nombre
+  const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await cliente.findOne({ idUser: idUser });
 
   console.log(pizzaDB);
   // guardar la pizza buscada en la base de datos
-  if (person) {
+  if (person && pizzaDB) {
     await cliente_pizza.create({
       cliente_id: person._id,
       pizza_id: pizzaDB._id,
