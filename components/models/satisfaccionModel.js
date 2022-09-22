@@ -10,7 +10,7 @@ const mySchema = new Schema({
   },
   cliente_id: {
     allowNull: false,
-    type: Number,
+    type: mongoose.Types.ObjectId,
   },
   createdAt: {
     allowNull: false,

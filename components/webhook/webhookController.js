@@ -10,12 +10,11 @@ class webhookController {
 
   async process_event(event) {
     // Capturamos los datos del que genera el evento y el mensaje
+    const idUser = event.id;
     const senderId = event.sender.id;
     const message = event.message;
     let request_body = {};
     if (message.text) {
-      console.log('Mensaje recibido: ' + message.text);
-
       // Enviando el mensaje al dialogflow
       const res = await dialogflow
         .detectIntent(config.PROYECT_ID, senderId, message.text, '', 'es')
@@ -24,6 +23,7 @@ class webhookController {
         });
 
       // Aqui editaremos el mensaje de respuesta
+      console.log('[ID User]' + idUser);
       console.log(res);
       request_body = await intentController(res, senderId);
       //------------------------------------------------

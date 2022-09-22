@@ -3,6 +3,8 @@ const cliente = require('../components/models/clienteModel');
 const Satisfaccion = require('../components/models/satisfaccionModel');
 const pizzeria = require('../components/models/pizzeriaModel');
 
+// 107564425413200 my id
+
 async function intentController(result, senderId) {
   let request_body = {};
   switch (result.intent.displayName) {
@@ -12,11 +14,11 @@ async function intentController(result, senderId) {
       request_body = await request(res, senderId); // enviar el array de pizzas
       break;
     case 'datos':
-      res = await datos(result, senderId);
+      res = await datos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'correo':
-      res = await correos(result, senderId);
+      res = await correos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'Satisfaccion':
@@ -110,21 +112,20 @@ async function satisfaccion(response, senderId) {
 }
 
 async function ubicacion(response) {
-  const p = await pizzeria.find({ nombre: 'Pizzaria' });
-  let detalle = `\r\n📍 *${p.direccion}* \r\n ubicacion gps: ${p.url}`;
+  const nombre = await pizzeria.find({ nombre: 'Pizzeria' });
+  let detalle = `\r\n📍 *${nombre.direccion}* \r\n ubicación gps: ${nombre.url}`;
   const res = response.replace('[x]', detalle + '\r\n');
   return res;
 }
 
 async function pizzaEspecifica(response) {
-  let nombrep = response.substring(
-    response.lastIndexOf('+') + 1,
-    response.lastIndexOf('+')
-  );
-  const p = await pizza.find({ nombre: nombrep });
+  const pizzaDF =
+    response.parameters?.fields?.TipoPizza?.structValue?.fields?.TipoPizza
+      ?.stringValue;
+  const pizzaDB = await pizza.find({ nombre: pizzaDF });
   let detalle;
-  if (nombrep != null) {
-    detalle = `\r\n Descripción: ${p.detalle} \r\n Tamaño: ${p.tamano} \r\n Precio: ${p.precio}Bs.`;
+  if (pizzaDB != null) {
+    detalle = `\r\n Descripción: ${pizzaDB.descripcion} \r\n Tamaño: ${pizzaDB.tamano} \r\n Precio: ${pizzaDB.precio}Bs.`;
   } else {
     return 'Lo siento, no tenemos esa pizza';
   }
