@@ -64,11 +64,11 @@ async function catalogo(response) {
 async function promociones(response) {
   // buscar en la base de datos mongoose las pizzas
   const dataDB = await promocion.find();
-  let promo = '';
-  dataDB.forEach((promocion) => {
-    promo += `\r\n *${promocion.nombre}* \r\n - ${promocion.descripcion} \r\n - ${promocion.precio}Bs. `;
+  let promos = '';
+  dataDB.forEach((promo) => {
+    promos += `\r\n *${promo.nombre}* \r\n - ${promo.descripcion} \r\n - ${promo.precio}Bs.`;
   });
-  const res = response.replace('[x]', promo + '\r\n');
+  const res = response.replace('[x]', promos + '\r\n');
   return res;
 }
 async function datos(response, idUser) {
