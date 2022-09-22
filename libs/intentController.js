@@ -27,7 +27,7 @@ async function intentController(result, senderId, idUser) {
       request_body = await request(res, senderId);
       break;
     case 'pizzaEspecifica':
-      res = await pizzaEspecifica(result.fulfillmentText, idUser);
+      res = await pizzaEspecifica(result, idUser);
       request_body = await request(res, senderId);
       break;
     case 'ubicacion':
@@ -146,7 +146,7 @@ async function pizzaEspecifica(response, idUser) {
   } else {
     return 'Lo siento, no tenemos esa pizza';
   }
-  const res = response.replace('[x]', detalle + '\r\n');
+  const res = response.fulfillmentText.replace('[x]', detalle + '\r\n');
   return res;
 }
 
