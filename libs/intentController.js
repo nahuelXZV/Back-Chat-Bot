@@ -26,11 +26,11 @@ async function intentController(result, senderId) {
       request_body = await request(res, senderId);
       break;
     case 'pizzaEspecifica':
-      res = await pizzaEspecifica(result);
+      res = await pizzaEspecifica(result.fulfillmentText);
       request_body = await request(res, senderId);
       break;
     case 'ubicacion':
-      res = await ubicacion(result);
+      res = await ubicacion(result.fulfillmentText);
       request_body = await request(res, senderId);
       break;
     default: // enviar el mensaje de respuesta

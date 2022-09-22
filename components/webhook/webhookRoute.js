@@ -23,9 +23,10 @@ router.post('/', async (req, res, next) => {
     if (req.body.object === 'page') {
       console.log(req.body);
       req.body.entry.forEach(async (entry) => {
+        const idUser = entry.id;
         entry.messaging.forEach(async (event) => {
           if (event.message) {
-            await controller.process_event(event).catch((error) => {
+            await controller.process_event(event, idUser).catch((error) => {
               next(error);
             });
           }

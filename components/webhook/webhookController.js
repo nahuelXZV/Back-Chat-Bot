@@ -8,9 +8,8 @@ const { error } = require('../../network/response');
 class webhookController {
   constructor() {}
 
-  async process_event(event) {
+  async process_event(event, idUser) {
     // Capturamos los datos del que genera el evento y el mensaje
-    const idUser = event.id;
     const senderId = event.sender.id;
     const message = event.message;
     let request_body = {};
