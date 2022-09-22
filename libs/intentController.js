@@ -3,6 +3,7 @@ const cliente = require('../components/models/clienteModel');
 const Satisfaccion = require('../components/models/satisfaccionModel');
 const pizzeria = require('../components/models/pizzeriaModel');
 const cliente_pizza = require('../components/models/cliente_pizzaModel');
+const promocion = require('../components/models/promocionModel');
 
 // 107564425413200 my id
 
@@ -27,7 +28,7 @@ async function intentController(result, senderId, idUser) {
       request_body = await request(res, senderId);
       break;
     case 'pizzaEspecifica':
-      res = await pizzaEspecifica(result, idUser); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await pizzaEspecifica(result, idUser); 
       request_body = await request(res, senderId);
       break;
     case 'precios':
@@ -35,9 +36,13 @@ async function intentController(result, senderId, idUser) {
       request_body = await request(res, senderId);
       break;
     case 'ubicacion':
-      res = await ubicacion(result.fulfillmentText); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await ubicacion(result.fulfillmentText); 
       request_body = await request(res, senderId);
       break;
+    case 'promociones':
+        res = await promociones(result.fulfillmentText);  // busca en la BD las promociones y crea un array con los datos
+        request_body = await request(res, senderId); // envia el array de promociones
+        break;
     default: // enviar el mensaje de respuesta
       request_body = await request(result.fulfillmentText, senderId);
       break;
@@ -54,6 +59,16 @@ async function catalogo(response) {
     pizzas += `\r\n🍕 *${pizza.nombre}* ${pizza.tamano} a ${pizza.precio}Bs. `;
   });
   const res = response.replace('[x]', pizzas + '\r\n');
+  return res;
+}
+async function promociones(response) {
+  // buscar en la base de datos mongoose las pizzas
+  const dataDB = await promocion.find();
+  let promo = '';
+  dataDB.forEach((promocion) => {
+    promo += `\r\n *${promocion.nombre}* \r\n - ${promocion.descripcion}`;
+  });
+  const res = response.replace('[x]', promo + '\r\n');
   return res;
 }
 async function datos(response, idUser) {
