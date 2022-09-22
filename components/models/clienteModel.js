@@ -20,7 +20,7 @@ const mySchema = new Schema({
   },
   idUser: {
     allowNull: false,
-    type: Number,
+    type: String,
   },
   createdAt: {
     allowNull: false,
