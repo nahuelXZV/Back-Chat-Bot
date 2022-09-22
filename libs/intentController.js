@@ -122,7 +122,7 @@ async function ubicacion(response) {
 }
 
 async function pizzaEspecifica(response, idUser) {
-  console.log( response.parameters?.fields?.TipoPizza?);
+  console.log(response.parameters?.fields?.TipoPizza);
   const pizzaDF =
     response.parameters?.fields?.TipoPizza?.structValue?.fields?.TipoPizza
       ?.stringValue;
