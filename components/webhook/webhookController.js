@@ -22,8 +22,6 @@ class webhookController {
         });
 
       // Aqui editaremos el mensaje de respuesta
-      console.log('[ID User]' + idUser);
-      console.log(res);
       request_body = await intentController(res, senderId, idUser);
       //------------------------------------------------
     } else {

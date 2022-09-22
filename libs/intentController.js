@@ -114,6 +114,7 @@ async function satisfaccion(response, idUser) {
 
 async function ubicacion(response) {
   const nombre = await pizzeria.findOne({ nombre: 'Pizzeria' });
+  console.log(nombre);
   let detalle = `\r\n📍 *${nombre.direccion}* \r\n ubicación gps: ${nombre.url}`;
   const res = response.replace('[x]', detalle + '\r\n');
   return res;
@@ -123,14 +124,18 @@ async function pizzaEspecifica(response, idUser) {
   const pizzaDF =
     response.parameters?.fields?.TipoPizza?.structValue?.fields?.TipoPizza
       ?.stringValue;
+  console.log(pizzaDF);
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await cliente.findOne({ idUser });
 
+  console.log(pizzaDB);
   // guardar la pizza buscada en la base de datos
-  cliente_pizza.create({
-    cliente_id: person._id,
-    pizza_id: pizzaDB._id,
-  });
+  if (person) {
+    await cliente_pizza.create({
+      cliente_id: person._id,
+      pizza_id: pizzaDB._id,
+    });
+  }
 
   let detalle;
   if (pizzaDB != null) {

@@ -21,7 +21,6 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     if (req.body.object === 'page') {
-      console.log(req.body);
       req.body.entry.forEach(async (entry) => {
         const idUser = entry.id;
         entry.messaging.forEach(async (event) => {
