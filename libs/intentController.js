@@ -16,23 +16,23 @@ async function intentController(result, senderId, idUser) {
       request_body = await request(res, senderId); // enviar el array de pizzas
       break;
     case 'datos':
-      res = await datos(result, idUser); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await datos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'correo':
-      res = await correos(result, idUser); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await correos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'Satisfaccion':
-      res = await satisfaccion(result, idUser); // guardar la satisfaccion del cliente
+      res = await satisfaccion(result, senderId); // guardar la satisfaccion del cliente
       request_body = await request(res, senderId);
       break;
     case 'pizzaEspecifica':
-      res = await pizzaEspecifica(result, idUser); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await pizzaEspecifica(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'precios':
-      res = await precios(result, idUser); // precios de una pizza especifica
+      res = await precios(result, senderId); // precios de una pizza especifica
       request_body = await request(res, senderId);
       break;
     case 'ubicacion':
@@ -66,7 +66,7 @@ async function promociones(response) {
   const dataDB = await promocion.find();
   let promos = '';
   dataDB.forEach((promo) => {
-    promos += `\r\n *${promo.nombre}* \r\n - ${promo.descripcion} \r\n - ${promo.precio}Bs.`;
+    promos += `\r\n *${promo.nombre}.* \r\n - ${promo.descripcion} \r\n.`;
   });
   const res = response.replace('[x]', promos + '\r\n');
   return res;
