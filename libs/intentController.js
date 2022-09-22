@@ -1,6 +1,7 @@
 const pizza = require('../components/models/pizzaModel');
 const cliente = require('../components/models/clienteModel');
 const Satisfaccion = require('../components/models/satisfaccionModel');
+const pizzeria = require('../components/models/pizzeriaModel');
 
 async function intentController(result, senderId) {
   let request_body = {};
@@ -20,6 +21,14 @@ async function intentController(result, senderId) {
       break;
     case 'Satisfaccion':
       res = await satisfaccion(result, senderId);
+      request_body = await request(res, senderId);
+      break;
+    case 'pizzaEspecifica':
+      res = await pizzaEspecifica(result);
+      request_body = await request(res, senderId);
+      break;
+    case 'ubicacion':
+      res = await ubicacion(result);
       request_body = await request(res, senderId);
       break;
     default: // enviar el mensaje de respuesta
@@ -98,6 +107,25 @@ async function satisfaccion(response, senderId) {
     }
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
+}
+
+async function ubicacion(response) {
+  const p = await pizzeria.find({ nombre: 'Pizzaria' });
+  let detalle = `\r\n📍 *${p.direccion}* \r\n ubicacion gps: ${p.url}`;
+  const res = response.replace('[x]', detalle + '\r\n');
+  return res;
+}
+
+async function pizzaEspecifica(response) {
+  let nombrep = response.substring(
+    response.lastIndexOf('+') + 1,
+    response.lastIndexOf('+')
+  );
+  const p = await pizza.find({ nombre: nombrep });
+  let detalle = `\r\n Descripcion: ${p.detalle} \r\n Tamano: ${p.tamano}`;
+  const res = response.replace('[x]', detalle + '\r\n');
+
+  return res;
 }
 
 async function request(res, senderId, type = 'text') {
