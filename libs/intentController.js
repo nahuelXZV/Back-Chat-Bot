@@ -87,7 +87,9 @@ async function correos(response, idUser) {
   if (email) {
     if (person) {
       // si existe actualizar el telefono
-      await person.updateOne({ correo: email });
+      await person.updateOne({ correo: email }).catch(() => {
+        return 'puedes proporcionarnos otro correo?';
+      });
     } else {
       await cliente.create({
         // guardar en la base de datos el nombre y el telefono del cliente

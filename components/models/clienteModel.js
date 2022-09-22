@@ -6,7 +6,6 @@ const mySchema = new Schema({
   nombre: {
     allowNull: true,
     type: String,
-    unique: true,
   },
   telefono: {
     allowNull: true,
