@@ -6,7 +6,6 @@ const mySchema = new Schema({
   opinion: {
     allowNull: false,
     type: String,
-    unique: true,
   },
   cliente_id: {
     allowNull: false,

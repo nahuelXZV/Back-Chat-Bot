@@ -35,7 +35,7 @@ async function intentController(result, senderId, idUser) {
       request_body = await request(res, senderId);
       break;
     case 'precios':
-      res = await precio(result, idUser);
+      res = await precios(result, idUser);
       request_body = await request(res, senderId);
       break;
     case 'ubicacion':
@@ -102,18 +102,19 @@ async function correos(response, idUser) {
 }
 
 async function satisfaccion(response, idUser) {
-  const satisfaccion = response.parameters?.fields?.satisfaccion?.stringValue; // nombre del cliente
+  const satisfaccionDF = await response.parameters?.fields?.satisfaccion
+    ?.stringValue; // nombre del cliente
   const person = await cliente.findOne({ idUser: idUser }); // buscar en la base de datos si el cliente ya existe
-  if (satisfaccion) {
+  if (satisfaccionDF) {
     if (person) {
       await Satisfaccion.create({
-        opinion: satisfaccion,
+        opinion: satisfaccionDF,
         cliente_id: person._id,
       });
     } else {
       await Satisfaccion.create({
         // guardar en la base de datos el nombre y el telefono del cliente
-        opinion: email,
+        opinion: satisfaccionDF,
       });
     }
   }
@@ -152,7 +153,7 @@ async function pizzaEspecifica(response, idUser) {
   return res;
 }
 
-async function pizzaEspecifica(response, idUser) {
+async function precios(response, idUser) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await cliente.findOne({ idUser: idUser });
