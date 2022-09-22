@@ -60,17 +60,16 @@ async function catalogo(response) {
   const res = response.replace('[x]', pizzas + '\r\n');
   return res;
 }
-
 async function datos(response, idUser) {
   const name =
     response.parameters?.fields?.person?.structValue?.fields?.name?.stringValue; // nombre del cliente
   const phone = response.parameters?.fields?.phone?.stringValue; // telefono del cliente
-  const person = await cliente.findOne({ idUser }); // buscar en la base de datos si el cliente ya existe
+  const person = await cliente.findOne({ idUser: idUser }); // buscar en la base de datos si el cliente ya existe
 
   if (name && phone) {
     if (person) {
       // si existe actualizar el telefono
-      await cliente.updateOne({ telefono: phone, nombre: name });
+      await person.updateOne({ telefono: phone, nombre: name });
     } else {
       // si no existe crear un nuevo cliente
       await cliente.create({
@@ -82,14 +81,13 @@ async function datos(response, idUser) {
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
 }
-
 async function correos(response, idUser) {
   const email = response.parameters?.fields?.email?.stringValue; // nombre del cliente
-  const person = await cliente.findOne({ idUser }); // buscar en la base de datos si el cliente ya existe
+  const person = await cliente.findOne({ idUser: idUser }); // buscar en la base de datos si el cliente ya existe
   if (email) {
     if (person) {
       // si existe actualizar el telefono
-      await cliente.updateOne({ correo: email });
+      await person.updateOne({ correo: email });
     } else {
       await cliente.create({
         // guardar en la base de datos el nombre y el telefono del cliente
@@ -100,7 +98,6 @@ async function correos(response, idUser) {
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
 }
-
 async function satisfaccion(response, idUser) {
   const satisfaccionDF = await response.parameters?.fields?.satisfaccion
     ?.stringValue; // nombre del cliente
@@ -120,7 +117,6 @@ async function satisfaccion(response, idUser) {
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
 }
-
 async function ubicacion(response) {
   // encontrar la priemra pizzeria
   const pizzeriaDB = await pizzeria.findOne();
@@ -129,7 +125,6 @@ async function ubicacion(response) {
   const res = response.replace('[x]', detalle + '\r\n');
   return res;
 }
-
 async function pizzaEspecifica(response, idUser) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
@@ -152,7 +147,6 @@ async function pizzaEspecifica(response, idUser) {
   const res = response.fulfillmentText.replace('[x]', detalle + '\r\n');
   return res;
 }
-
 async function precios(response, idUser) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
