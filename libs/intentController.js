@@ -126,7 +126,7 @@ async function pizzaEspecifica(response, idUser) {
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await cliente.findOne({ idUser: idUser });
 
-  console.log(pizzaDB);
+  console.log(pizzaDB.nombre);
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
     await cliente_pizza.create({
@@ -136,7 +136,7 @@ async function pizzaEspecifica(response, idUser) {
   }
 
   let detalle;
-  if (pizzaDB != null) {
+  if (pizzaDB) {
     detalle = `\r\n Descripción: ${pizzaDB.descripcion} \r\n Tamaño: ${pizzaDB.tamano} \r\n Precio: ${pizzaDB.precio}Bs.`;
   } else {
     return 'Lo siento, no tenemos esa pizza';
