@@ -122,9 +122,13 @@ async function pizzaEspecifica(response) {
     response.lastIndexOf('+')
   );
   const p = await pizza.find({ nombre: nombrep });
-  let detalle = `\r\n Descripcion: ${p.detalle} \r\n Tamano: ${p.tamano}`;
+  let detalle;
+  if (nombrep != null) {
+    detalle = `\r\n Descripción: ${p.detalle} \r\n Tamaño: ${p.tamano} \r\n Precio: ${p.precio}Bs.`;
+  } else {
+    return 'Lo siento, no tenemos esa pizza';
+  }
   const res = response.replace('[x]', detalle + '\r\n');
-
   return res;
 }
 
