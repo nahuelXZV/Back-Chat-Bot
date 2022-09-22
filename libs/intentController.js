@@ -66,7 +66,7 @@ async function catalogo(response) {
   return res;
 }
 async function promociones(response) {
-  // buscar en la base de datos mongoose las pizzas
+  // buscar en la base de datos mongoose las promociones
   const dataDB = await promocion.find();
   let promo = '';
   dataDB.forEach((promocion) => {
