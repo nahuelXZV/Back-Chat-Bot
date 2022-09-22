@@ -24,25 +24,25 @@ async function intentController(result, senderId, idUser) {
       request_body = await request(res, senderId);
       break;
     case 'Satisfaccion':
-      res = await satisfaccion(result, idUser);
+      res = await satisfaccion(result, idUser); // guardar la satisfaccion del cliente
       request_body = await request(res, senderId);
       break;
     case 'pizzaEspecifica':
-      res = await pizzaEspecifica(result, idUser); 
+      res = await pizzaEspecifica(result, idUser); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'precios':
-      res = await precios(result, idUser);
+      res = await precios(result, idUser); // precios de una pizza especifica
       request_body = await request(res, senderId);
       break;
     case 'ubicacion':
-      res = await ubicacion(result.fulfillmentText); 
+      res = await ubicacion(result.fulfillmentText); // ubicacion de la pizzeria
       request_body = await request(res, senderId);
       break;
     case 'promociones':
-        res = await promociones(result.fulfillmentText);  // busca en la BD las promociones y crea un array con los datos
-        request_body = await request(res, senderId); // envia el array de promociones
-        break;
+      res = await promociones(result.fulfillmentText); // busca en la BD las promociones y crea un array con los datos
+      request_body = await request(res, senderId); // envia el array de promociones
+      break;
     default: // enviar el mensaje de respuesta
       request_body = await request(result.fulfillmentText, senderId);
       break;
@@ -66,7 +66,7 @@ async function promociones(response) {
   const dataDB = await promocion.find();
   let promo = '';
   dataDB.forEach((promocion) => {
-    promo += `\r\n *${promocion.nombre}* \r\n - ${promocion.descripcion}`;
+    promo += `\r\n *${promocion.nombre}* \r\n - ${promocion.descripcion} \r\n - ${promocion.precio}Bs. `;
   });
   const res = response.replace('[x]', promo + '\r\n');
   return res;
