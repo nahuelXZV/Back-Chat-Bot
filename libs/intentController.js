@@ -2,10 +2,11 @@ const pizza = require('../components/models/pizzaModel');
 const cliente = require('../components/models/clienteModel');
 const Satisfaccion = require('../components/models/satisfaccionModel');
 const pizzeria = require('../components/models/pizzeriaModel');
+const cliente_pizza = require('../components/models/cliente_pizzaModel');
 
 // 107564425413200 my id
 
-async function intentController(result, senderId) {
+async function intentController(result, senderId, idUser) {
   let request_body = {};
   switch (result.intent.displayName) {
     // depende del intent que se detecte se ejecutara una funcion
@@ -14,19 +15,19 @@ async function intentController(result, senderId) {
       request_body = await request(res, senderId); // enviar el array de pizzas
       break;
     case 'datos':
-      res = await datos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await datos(result, idUser); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'correo':
-      res = await correos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await correos(result, idUser); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await request(res, senderId);
       break;
     case 'Satisfaccion':
-      res = await satisfaccion(result, senderId);
+      res = await satisfaccion(result, idUser);
       request_body = await request(res, senderId);
       break;
     case 'pizzaEspecifica':
-      res = await pizzaEspecifica(result.fulfillmentText);
+      res = await pizzaEspecifica(result.fulfillmentText, idUser);
       request_body = await request(res, senderId);
       break;
     case 'ubicacion':
@@ -52,31 +53,31 @@ async function catalogo(response) {
   return res;
 }
 
-async function datos(response, senderId) {
+async function datos(response, idUser) {
   const name =
     response.parameters?.fields?.person?.structValue?.fields?.name?.stringValue; // nombre del cliente
   const phone = response.parameters?.fields?.phone?.stringValue; // telefono del cliente
-  const person = await cliente.findOne({ senderId }); // buscar en la base de datos si el cliente ya existe
+  const person = await cliente.findOne({ idUser }); // buscar en la base de datos si el cliente ya existe
 
   if (name && phone) {
     if (person) {
       // si existe actualizar el telefono
-      await cliente.updateOne({ telefono: phone, senderId: senderId });
+      await cliente.updateOne({ telefono: phone, nombre: name });
     } else {
       // si no existe crear un nuevo cliente
       await cliente.create({
         nombre: name,
         telefono: phone,
-        senderId: senderId,
+        idUser: idUser,
       });
     }
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
 }
 
-async function correos(response, senderId) {
+async function correos(response, idUser) {
   const email = response.parameters?.fields?.email?.stringValue; // nombre del cliente
-  const person = await cliente.findOne({ senderId }); // buscar en la base de datos si el cliente ya existe
+  const person = await cliente.findOne({ idUser }); // buscar en la base de datos si el cliente ya existe
   if (email) {
     if (person) {
       // si existe actualizar el telefono
@@ -85,16 +86,16 @@ async function correos(response, senderId) {
       await cliente.create({
         // guardar en la base de datos el nombre y el telefono del cliente
         correo: email,
-        senderId: senderId,
+        idUser: idUser,
       });
     }
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
 }
 
-async function satisfaccion(response, senderId) {
+async function satisfaccion(response, idUser) {
   const satisfaccion = response.parameters?.fields?.satisfaccion?.stringValue; // nombre del cliente
-  const person = await cliente.findOne({ senderId }); // buscar en la base de datos si el cliente ya existe
+  const person = await cliente.findOne({ idUser }); // buscar en la base de datos si el cliente ya existe
   if (satisfaccion) {
     if (person) {
       await Satisfaccion.create({
@@ -112,17 +113,25 @@ async function satisfaccion(response, senderId) {
 }
 
 async function ubicacion(response) {
-  const nombre = await pizzeria.find({ nombre: 'Pizzeria' });
+  const nombre = await pizzeria.findOne({ nombre: 'Pizzeria' });
   let detalle = `\r\n📍 *${nombre.direccion}* \r\n ubicación gps: ${nombre.url}`;
   const res = response.replace('[x]', detalle + '\r\n');
   return res;
 }
 
-async function pizzaEspecifica(response) {
+async function pizzaEspecifica(response, idUser) {
   const pizzaDF =
     response.parameters?.fields?.TipoPizza?.structValue?.fields?.TipoPizza
       ?.stringValue;
-  const pizzaDB = await pizza.find({ nombre: pizzaDF });
+  const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
+  const person = await cliente.findOne({ idUser });
+
+  // guardar la pizza buscada en la base de datos
+  cliente_pizza.create({
+    cliente_id: person._id,
+    pizza_id: pizzaDB._id,
+  });
+
   let detalle;
   if (pizzaDB != null) {
     detalle = `\r\n Descripción: ${pizzaDB.descripcion} \r\n Tamaño: ${pizzaDB.tamano} \r\n Precio: ${pizzaDB.precio}Bs.`;

@@ -18,7 +18,7 @@ const mySchema = new Schema({
     type: String,
     unique: true,
   },
-  senderId: {
+  idUser: {
     allowNull: false,
     type: Number,
   },
