@@ -123,9 +123,7 @@ async function ubicacion(response) {
 
 async function pizzaEspecifica(response, idUser) {
   console.log(response.parameters?.fields?.TipoPizza);
-  const pizzaDF =
-    response.parameters?.fields?.TipoPizza?.structValue?.fields?.TipoPizza
-      ?.stringValue;
+  const pizzaDF = response.parameters?.fields?.TipoPizza?.stringValue;
   console.log(pizzaDF);
   // encontrar una pizza por medio del nombre
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
