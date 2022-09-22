@@ -5,13 +5,19 @@ const pizzeria = require('../components/models/pizzeriaModel');
 const cliente_pizza = require('../components/models/cliente_pizzaModel');
 const promocion = require('../components/models/promocionModel');
 
-// 107564425413200 my id
-
 async function intentController(result, senderId, idUser) {
   let request_body = {};
   switch (result.intent.displayName) {
     // depende del intent que se detecte se ejecutara una funcion
-    case 'catalogo' | 'ubicacion - yes' | 'Default Welcome Intent - custom':
+    case 'catalogo':
+      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      request_body = await request(res, senderId); // enviar el array de pizzas
+      break;
+    case 'ubicacion - yes':
+      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      request_body = await request(res, senderId); // enviar el array de pizzas
+      break;
+    case 'Default Welcome Intent - custom':
       res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
       request_body = await request(res, senderId); // enviar el array de pizzas
       break;
