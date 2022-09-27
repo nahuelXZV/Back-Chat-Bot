@@ -246,6 +246,7 @@ async function request(res, senderId, type = 'text') {
 
 async function sendImages(request_body, senderId) {
   request_body.forEach((element) => {
+    console.log(element);
     request(
       {
         uri: 'https://graph.facebook.com/v14.0/me/messages',
