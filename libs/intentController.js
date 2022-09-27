@@ -6,6 +6,7 @@ const cliente_pizza = require('../components/models/cliente_pizzaModel');
 const promocion = require('../components/models/promocionModel');
 const prospecto = require('../components/models/prospectoModel');
 const config = require('../config/config');
+const request = require('request');
 
 async function intentController(result, senderId, idUser) {
   let request_body = {};
@@ -13,46 +14,46 @@ async function intentController(result, senderId, idUser) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
       res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
-      request_body = await request(res, senderId); // enviar el array de pizzas
+      request_body = await requestM(res, senderId); // enviar el array de pizzas
       break;
     case 'ubicacion - yes':
       res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
-      request_body = await request(res, senderId); // enviar el array de pizzas
+      request_body = await requestM(res, senderId); // enviar el array de pizzas
       break;
     case 'Default Welcome Intent - custom':
       res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
-      request_body = await request(res, senderId); // enviar el array de pizzas
+      request_body = await requestM(res, senderId); // enviar el array de pizzas
       break;
     case 'datos':
       res = await datos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'correo':
       res = await correos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'Satisfaccion':
       res = await satisfaccion(result, senderId); // guardar la satisfaccion del cliente
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'pizzaEspecifica':
       res = await pizzaEspecifica(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'precios':
       res = await precios(result, senderId); // precios de una pizza especifica
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'ubicacion':
       res = await ubicacion(result.fulfillmentText); // ubicacion de la pizzeria
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'promociones':
       res = await promociones(result.fulfillmentText); // busca en la BD las promociones y crea un array con los datos
-      request_body = await request(res, senderId); // envia el array de promociones
+      request_body = await requestM(res, senderId); // envia el array de promociones
       break;
     default: // enviar el mensaje de respuesta
-      request_body = await request(result.fulfillmentText, senderId);
+      request_body = await requestM(result.fulfillmentText, senderId);
       break;
   }
   console.log(request_body);
@@ -210,7 +211,7 @@ async function precios(response, idUser) {
   const res = response.fulfillmentText.replace('[x]', detalle + '\r\n');
   return res;
 }
-async function request(res, senderId, type = 'text') {
+async function requestM(res, senderId, type = 'text') {
   let request_body = {};
   switch (type) {
     case 'card':
@@ -246,7 +247,6 @@ async function request(res, senderId, type = 'text') {
 
 async function sendImages(request_body, senderId) {
   request_body.forEach((element) => {
-    console.log(element);
     request(
       {
         uri: 'https://graph.facebook.com/v14.0/me/messages',
@@ -259,7 +259,10 @@ async function sendImages(request_body, senderId) {
           message: {
             attachment: {
               type: 'image',
-              payload: element,
+              payload: {
+                url: element.url,
+                is_reusable: true,
+              },
             },
           },
         },
