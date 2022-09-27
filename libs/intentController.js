@@ -5,8 +5,6 @@ const pizzeria = require('../components/models/pizzeriaModel');
 const cliente_pizza = require('../components/models/cliente_pizzaModel');
 const promocion = require('../components/models/promocionModel');
 const prospecto = require('../components/models/prospectoModel');
-const webhookController = require('../components/webhook/webhookController');
-const controller = new webhookController();
 
 async function intentController(result, senderId, idUser) {
   let request_body = {};
@@ -70,7 +68,7 @@ async function catalogo(response, senderId) {
     images.push({ url: pizza.imagen, is_reusable: true });
   });
   const res = response.replace('[x]', pizzas + '\r\n');
-  await controller.sendImages(images, senderId).catch((err) => {
+  await sendImages(images, senderId).catch((err) => {
     console.log(err);
     return res;
   });
@@ -243,6 +241,37 @@ async function request(res, senderId, type = 'text') {
       break;
   }
   return request_body;
+}
+
+async function sendImages(request_body, senderId) {
+  request_body.forEach((element) => {
+    request(
+      {
+        uri: 'https://graph.facebook.com/v14.0/me/messages',
+        qs: { access_token: config.KEY_FACEBOOK },
+        method: 'POST',
+        json: {
+          recipient: {
+            id: senderId,
+          },
+          message: {
+            attachment: {
+              type: 'image',
+              payload: element,
+            },
+          },
+        },
+      },
+      (err, res, body) => {
+        if (!err) {
+          console.log('Imagen enviado!');
+        } else {
+          console.error('No se puedo enviar la Imagen:' + err);
+          boom.badImplementation(error);
+        }
+      }
+    );
+  });
 }
 
 module.exports = intentController;
