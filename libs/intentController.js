@@ -32,6 +32,10 @@ async function intentController(result, senderId, idUser) {
       res = await correos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await requestM(res, senderId);
       break;
+    case 'promociones - custom':
+      res = await correos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
+      request_body = await requestM(res, senderId);
+      break;
     case 'Satisfaccion':
       res = await satisfaccion(result, senderId); // guardar la satisfaccion del cliente
       request_body = await requestM(res, senderId);
@@ -81,7 +85,7 @@ async function promociones(response) {
   const dataDB = await promocion.find();
   let promos = '';
   dataDB.forEach((promo) => {
-    promos += `\r\n *${promo.nombre}.* \r\n - ${promo.descripcion} \r\n.`;
+    promos += `\r\n *✨${promo.nombre}.* \r\n -${promo.descripcion}. \r\n`;
   });
   const res = response.replace('[x]', promos + '\r\n');
   return res;
@@ -244,9 +248,8 @@ async function requestM(res, senderId, type = 'text') {
   }
   return request_body;
 }
-
 async function sendImages(request_body, senderId) {
-  request_body.forEach((element) => {
+  await request_body.forEach((element) => {
     request(
       {
         uri: 'https://graph.facebook.com/v14.0/me/messages',
