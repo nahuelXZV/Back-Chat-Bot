@@ -56,6 +56,10 @@ async function intentController(result, senderId, idUser) {
       res = await promociones(result.fulfillmentText); // busca en la BD las promociones y crea un array con los datos
       request_body = await requestM(res, senderId); // envia el array de promociones
       break;
+    case 'restaurante':
+      res = await restaurante(result.fulfillmentText); // busca en la BD las promociones y crea un array con los datos
+      request_body = await requestM(res, senderId); // envia el array de promociones
+      break;
     default: // enviar el mensaje de respuesta
       request_body = await requestM(result.fulfillmentText, senderId);
       break;
@@ -88,6 +92,12 @@ async function promociones(response) {
     promos += `\r\n *✨${promo.nombre}* \r\n   -${promo.descripcion}. \r\n`;
   });
   const res = response.replace('[x]', promos + '\r\n');
+  return res;
+}
+async function restaurante(response) {
+  const pizzeriaDB = await pizzeria.findOne();
+  let detalle = `${pizzeriaDB.celular}`;
+  const res = response.replace('[x]', detalle + '\r\n');
   return res;
 }
 async function datos(response, idUser) {
@@ -166,7 +176,6 @@ async function satisfaccion(response, idUser) {
 async function ubicacion(response) {
   // encontrar la priemra pizzeria
   const pizzeriaDB = await pizzeria.findOne();
-  console.log(pizzeriaDB);
   let detalle = `\r\n📍 *${pizzeriaDB.direccion}* \r\n 📍 *Ubicación gps*: ${pizzeriaDB.url}`;
   const res = response.replace('[x]', detalle + '\r\n');
   return res;
