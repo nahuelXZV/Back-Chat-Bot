@@ -195,7 +195,7 @@ async function pizzaEspecifica(response, idUser) {
 
   let detalle;
   if (pizzaDB) {
-    detalle = `\r\nDescripción: ${pizzaDB.descripcion} \r\nTamaño: ${pizzaDB.tamano} \r\nPrecio: ${pizzaDB.precio}Bs.`;
+    detalle = `\r\n🧾Descripción: ${pizzaDB.descripcion} \r\n🍕Tamaño: *${pizzaDB.tamano}* \r\n💵Precio: *${pizzaDB.precio}* Bs.`;
   } else {
     return 'Lo siento, no tenemos esa pizza';
   }
