@@ -4,21 +4,24 @@ const Satisfaccion = require('../components/models/satisfaccionModel');
 const pizzeria = require('../components/models/pizzeriaModel');
 const cliente_pizza = require('../components/models/cliente_pizzaModel');
 const promocion = require('../components/models/promocionModel');
+const prospecto = require('../components/models/prospectoModel');
+const webhookController = require('../components/webhook/webhookController');
+const controller = new webhookController();
 
 async function intentController(result, senderId, idUser) {
   let request_body = {};
   switch (result.intent.displayName) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
-      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
       request_body = await request(res, senderId); // enviar el array de pizzas
       break;
     case 'ubicacion - yes':
-      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
       request_body = await request(res, senderId); // enviar el array de pizzas
       break;
     case 'Default Welcome Intent - custom':
-      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
       request_body = await request(res, senderId); // enviar el array de pizzas
       break;
     case 'datos':
@@ -57,14 +60,20 @@ async function intentController(result, senderId, idUser) {
   return request_body;
 }
 
-async function catalogo(response) {
-  // buscar en la base de datos mongoose las pizzas
-  const dataDB = await pizza.find();
+async function catalogo(response, senderId) {
+  // buscar en la base de datos mongoose las 5 primeras pizzas
+  const dataDB = await pizza.find().limit(5);
   let pizzas = '';
+  let images = [];
   dataDB.forEach((pizza) => {
     pizzas += `\r\n🍕 *${pizza.nombre}* ${pizza.tamano} a ${pizza.precio}Bs. `;
+    images.push({ url: pizza.imagen, is_reusable: true });
   });
   const res = response.replace('[x]', pizzas + '\r\n');
+  await controller.sendImages(images, senderId).catch((err) => {
+    console.log(err);
+    return res;
+  });
   return res;
 }
 async function promociones(response) {
@@ -89,11 +98,15 @@ async function datos(response, idUser) {
       await person.updateOne({ telefono: phone, nombre: name });
     } else {
       // si no existe crear un nuevo cliente
-      await cliente.create({
-        nombre: name,
-        telefono: phone,
-        idUser: idUser,
-      });
+      await cliente
+        .create({
+          nombre: name,
+          telefono: phone,
+          idUser: idUser,
+        })
+        .catch((err) => {
+          return response.fulfillmentText;
+        });
     }
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
@@ -108,11 +121,22 @@ async function correos(response, idUser) {
         return 'puedes proporcionarnos otro correo?';
       });
     } else {
-      await cliente.create({
-        // guardar en la base de datos el nombre y el telefono del cliente
-        correo: email,
-        idUser: idUser,
-      });
+      const pros = await prospecto.findOne({ idUser: idUser });
+      if (pros) {
+        await pros.updateOne({ correo: email }).catch(() => {
+          return 'puedes proporcionarnos otro correo?';
+        });
+      } else {
+        await prospecto
+          .create({
+            // guardar en la base de datos el nombre y el telefono del cliente
+            correo: email,
+            idUser: idUser,
+          })
+          .catch(() => {
+            return 'puedes proporcionarnos otro correo?';
+          });
+      }
     }
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
@@ -129,7 +153,6 @@ async function satisfaccion(response, idUser) {
       });
     } else {
       await Satisfaccion.create({
-        // guardar en la base de datos el nombre y el telefono del cliente
         opinion: satisfaccionDF,
       });
     }

@@ -55,6 +55,36 @@ class webhookController {
       }
     );
   }
+  async sendImages(request_body, senderId) {
+    request_body.forEach((element) => {
+      request(
+        {
+          uri: 'https://graph.facebook.com/v14.0/me/messages',
+          qs: { access_token: config.KEY_FACEBOOK },
+          method: 'POST',
+          json: {
+            recipient: {
+              id: senderId,
+            },
+            message: {
+              attachment: {
+                type: 'image',
+                payload: element,
+              },
+            },
+          },
+        },
+        (err, res, body) => {
+          if (!err) {
+            console.log('Imagen enviado!');
+          } else {
+            console.error('No se puedo enviar la Imagen:' + err);
+            boom.badImplementation(error);
+          }
+        }
+      );
+    });
+  }
 }
 
 module.exports = webhookController;

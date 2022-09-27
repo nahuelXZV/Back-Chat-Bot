@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
-  nombre: {
+  correo: {
+    allowNull: true,
     type: String,
-    required: true,
   },
-  descripcion: {
+  idUser: {
+    allowNull: false,
     type: String,
-    required: false,
   },
   createdAt: {
     allowNull: false,
@@ -19,5 +19,5 @@ const mySchema = new Schema({
   },
 });
 
-const model = mongoose.model('Promocion', mySchema);
+const model = mongoose.model('Prospecto', mySchema);
 module.exports = model;

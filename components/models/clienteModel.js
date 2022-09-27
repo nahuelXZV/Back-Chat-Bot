@@ -10,16 +10,23 @@ const mySchema = new Schema({
   telefono: {
     allowNull: true,
     type: String,
-    unique: true,
   },
   correo: {
     allowNull: true,
     type: String,
-    unique: true,
+  },
+  tipo: {
+    allowNull: true,
+    type: String,
   },
   idUser: {
     allowNull: false,
     type: String,
+  },
+  prospecto_id: {
+    allowNull: true,
+    type: mongoose.Types.ObjectId,
+    field: 'prospecto_id',
   },
   createdAt: {
     allowNull: false,
