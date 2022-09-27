@@ -5,6 +5,7 @@ const pizzeria = require('../components/models/pizzeriaModel');
 const cliente_pizza = require('../components/models/cliente_pizzaModel');
 const promocion = require('../components/models/promocionModel');
 const prospecto = require('../components/models/prospectoModel');
+const config = require('../config/config');
 
 async function intentController(result, senderId, idUser) {
   let request_body = {};
