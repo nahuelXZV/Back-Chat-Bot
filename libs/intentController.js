@@ -85,7 +85,7 @@ async function promociones(response) {
   const dataDB = await promocion.find();
   let promos = '';
   dataDB.forEach((promo) => {
-    promos += `\r\n *✨${promo.nombre}.* \r\n -${promo.descripcion}. \r\n`;
+    promos += `\r\n *✨${promo.nombre}* \r\n   -${promo.descripcion}. \r\n`;
   });
   const res = response.replace('[x]', promos + '\r\n');
   return res;
@@ -167,7 +167,7 @@ async function ubicacion(response) {
   // encontrar la priemra pizzeria
   const pizzeriaDB = await pizzeria.findOne();
   console.log(pizzeriaDB);
-  let detalle = `\r\n📍 *${pizzeriaDB.direccion}* \r\n ubicación gps: ${pizzeriaDB.url}`;
+  let detalle = `\r\n📍 *${pizzeriaDB.direccion}* \r\n 📍 *Ubicación gps*: ${pizzeriaDB.url}`;
   const res = response.replace('[x]', detalle + '\r\n');
   return res;
 }
