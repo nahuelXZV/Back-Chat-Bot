@@ -291,7 +291,11 @@ async function sendImages(request_body, senderId) {
 }
 
 async function getPerfil(senderId) {
-  $perfil = request({
+  // obtener datos del perfil de facebook
+  const url = `https://graph.facebook.com/v14.0/${senderId}?fields=first_name,last_name,profile_pic&access_token=${config.KEY_FACEBOOK}`;
+  const perfil = await axios.get(url);
+
+  /* $perfil = await request({
     uri: 'https://graph.facebook.com/v14.0/' + senderId,
     qs: {
       access_token: config.KEY_FACEBOOK,
@@ -299,23 +303,23 @@ async function getPerfil(senderId) {
     },
     method: 'GET',
   }).catch((error) => {
-    boom.badImplementation(error);
-  });
+    return;
+  }); */
 
-  console.log($perfil);
+  console.log(perfil);
 
-  $user = await prospecto.findOne({ idUser: senderId });
-  if (!$user) {
+  user = await prospecto.findOne({ idUser: senderId });
+  if (!user) {
     await prospecto.create({
       idUser: senderId,
-      nombre: $perfil.first_name + ' ' + $perfil.last_name,
-      foto: $perfil.profile_pic,
+      nombre: perfil.first_name + ' ' + perfil.last_name,
+      foto: perfil.profile_pic,
     });
   } else {
     // validar si la fecha de actualizacion es diferente a la fecha actual
-    if ($user.updatedAt.getDate() != new Date().getDate()) {
+    if (user.updatedAt.getDate() != new Date().getDate()) {
       await prospecto_ingreso.create({
-        prospecto_id: $user._id,
+        prospecto_id: user._id,
       });
     }
   }
