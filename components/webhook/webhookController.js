@@ -22,7 +22,7 @@ class webhookController {
         });
 
       // Aqui editaremos el mensaje de respuesta
-      request_body = await intentController(res, senderId, idUser);
+      request_body = await intentController(res, senderId);
       //------------------------------------------------
     } else {
       request_body = {

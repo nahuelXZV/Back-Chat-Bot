@@ -3,19 +3,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
-  nombre: {
-    type: String,
-  },
-  foto: {
-    type: String,
-  },
-  correo: {
-    allowNull: true,
-    type: String,
-  },
-  idUser: {
-    allowNull: false,
-    type: String,
+  prospecto_id: {
+    type: mongoose.Types.ObjectId,
+    ref: 'Prospecto',
   },
   createdAt: {
     allowNull: false,
@@ -25,5 +15,5 @@ const mySchema = new Schema({
   },
 });
 
-const model = mongoose.model('Prospecto', mySchema);
+const model = mongoose.model('Prospecto_ingreso', mySchema);
 module.exports = model;

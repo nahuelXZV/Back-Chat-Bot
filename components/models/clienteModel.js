@@ -27,6 +27,7 @@ const mySchema = new Schema({
     allowNull: true,
     type: mongoose.Types.ObjectId,
     field: 'prospecto_id',
+    ref: 'Prospecto',
   },
   createdAt: {
     allowNull: false,

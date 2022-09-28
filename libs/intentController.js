@@ -2,14 +2,16 @@ const pizza = require('../components/models/pizzaModel');
 const cliente = require('../components/models/clienteModel');
 const Satisfaccion = require('../components/models/satisfaccionModel');
 const pizzeria = require('../components/models/pizzeriaModel');
-const cliente_pizza = require('../components/models/cliente_pizzaModel');
+const prospecto_pizza = require('../components/models/prospecto_pizzaModel');
 const promocion = require('../components/models/promocionModel');
 const prospecto = require('../components/models/prospectoModel');
 const config = require('../config/config');
 const request = require('request');
+const prospecto_ingreso = require('../components/models/prospecto_ingresoModel');
 
-async function intentController(result, senderId, idUser) {
+async function intentController(result, senderId) {
   let request_body = {};
+  await getPerfil(senderId);
   switch (result.intent.displayName) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
@@ -112,11 +114,13 @@ async function datos(response, idUser) {
       await person.updateOne({ telefono: phone, nombre: name });
     } else {
       // si no existe crear un nuevo cliente
+      const $prosp = await prospecto.findOne({ idUser: idUser });
       await cliente
         .create({
           nombre: name,
           telefono: phone,
           idUser: idUser,
+          prospecto_id: $prosp._id,
         })
         .catch((err) => {
           return response.fulfillmentText;
@@ -130,27 +134,22 @@ async function correos(response, idUser) {
   const person = await cliente.findOne({ idUser: idUser }); // buscar en la base de datos si el cliente ya existe
   if (email) {
     if (person) {
-      // si existe actualizar el telefono
+      // si existe actualizar el correo
       await person.updateOne({ correo: email }).catch(() => {
         return 'puedes proporcionarnos otro correo?';
       });
     } else {
-      const pros = await prospecto.findOne({ idUser: idUser });
-      if (pros) {
-        await pros.updateOne({ correo: email }).catch(() => {
-          return 'puedes proporcionarnos otro correo?';
+      const $prosp = await prospecto.findOne({ idUser: idUser });
+      await cliente
+        .create({
+          nombre: $prosp.nombre,
+          correo: email,
+          idUser: idUser,
+          prospecto_id: $prosp._id,
+        })
+        .catch((err) => {
+          return response.fulfillmentText;
         });
-      } else {
-        await prospecto
-          .create({
-            // guardar en la base de datos el nombre y el telefono del cliente
-            correo: email,
-            idUser: idUser,
-          })
-          .catch(() => {
-            return 'puedes proporcionarnos otro correo?';
-          });
-      }
     }
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
@@ -187,15 +186,15 @@ async function pizzaEspecifica(response, idUser) {
 
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
-    await cliente_pizza.create({
-      cliente_id: person._id,
+    await prospecto_pizza.create({
+      prospecto_id: person._id,
       pizza_id: pizzaDB._id,
     });
   }
 
   let detalle;
   if (pizzaDB) {
-    detalle = `\r\n🧾Descripción: ${pizzaDB.descripcion} \r\n🍕Tamaño: *${pizzaDB.tamano}* \r\n💵Precio: *${pizzaDB.precio}* Bs.`;
+    detalle = `\r\n🧾Descripción: ${pizzaDB.descripcion} \r\n🍕Tamaño: *${pizzaDB.tamano}* \r\n💵Precio: *${pizzaDB.precio}Bs*.`;
   } else {
     return 'Lo siento, no tenemos esa pizza';
   }
@@ -209,8 +208,8 @@ async function precios(response, idUser) {
 
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
-    await cliente_pizza.create({
-      cliente_id: person._id,
+    await prospecto_pizza.create({
+      prospecto_id: person._id,
       pizza_id: pizzaDB._id,
     });
   }
@@ -289,6 +288,34 @@ async function sendImages(request_body, senderId) {
       }
     );
   });
+}
+
+async function getPerfil(senderId) {
+  $perfil = request({
+    uri: 'https://graph.facebook.com/v14.0/' + senderId,
+    qs: {
+      access_token: config.KEY_FACEBOOK,
+      fields: 'first_name,last_name,profile_pic',
+    },
+    method: 'GET',
+  }).catch((error) => {
+    boom.badImplementation(error);
+  });
+
+  console.log($perfil);
+
+  $user = await prospecto.findOne({ idUser: senderId });
+  if (!$user) {
+    await prospecto.create({
+      idUser: senderId,
+      nombre: $perfil.first_name + ' ' + $perfil.last_name,
+      foto: $perfil.profile_pic,
+    });
+  } else {
+    await prospecto_ingreso.create({
+      prospecto_id: $user._id,
+    });
+  }
 }
 
 module.exports = intentController;
