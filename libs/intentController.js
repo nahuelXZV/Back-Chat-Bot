@@ -304,10 +304,15 @@ async function getPerfil(senderId) {
       foto: perfil.data.profile_pic,
     });
   } else {
-    // validar si la fecha de actualizacion es diferente a la fecha actual
-    if (user.createdAt.getDate() != new Date().getDate()) {
+    // buscar en prospecto_ingreso si hay una fecha de ingreso a la de hoy
+    const ingreso = await prospecto_ingreso.findOne({
+      prospecto_id: user._id,
+      createdAt: Date.now(),
+    });
+    if (!ingreso) {
       await prospecto_ingreso.create({
         prospecto_id: user._id,
+        createdAt: Date.now(),
       });
     }
   }
