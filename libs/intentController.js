@@ -305,7 +305,7 @@ async function getPerfil(senderId) {
     });
   } else {
     // validar si la fecha de actualizacion es diferente a la fecha actual
-    if (user.updatedAt.getDate() != new Date().getDate()) {
+    if (user.createdAt.getDate() != new Date().getDate()) {
       await prospecto_ingreso.create({
         prospecto_id: user._id,
       });
