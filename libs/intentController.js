@@ -307,12 +307,12 @@ async function getPerfil(senderId) {
     // buscar en prospecto_ingreso si hay una fecha de ingreso a la de hoy
     const ingreso = await prospecto_ingreso.findOne({
       prospecto_id: user._id,
-      createdAt: Date.now(),
+      createdAt: new Date().toISOString().slice(0, 10),
     });
     if (!ingreso) {
       await prospecto_ingreso.create({
         prospecto_id: user._id,
-        createdAt: Date.now(),
+        createdAt: new Date().toISOString().slice(0, 10),
       });
     }
   }
