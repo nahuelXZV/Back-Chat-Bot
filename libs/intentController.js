@@ -312,9 +312,12 @@ async function getPerfil(senderId) {
       foto: $perfil.profile_pic,
     });
   } else {
-    await prospecto_ingreso.create({
-      prospecto_id: $user._id,
-    });
+    // validar si la fecha de actualizacion es diferente a la fecha actual
+    if ($user.updatedAt.getDate() != new Date().getDate()) {
+      await prospecto_ingreso.create({
+        prospecto_id: $user._id,
+      });
+    }
   }
 }
 
