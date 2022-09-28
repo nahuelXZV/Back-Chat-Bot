@@ -296,25 +296,12 @@ async function getPerfil(senderId) {
   const url = `https://graph.facebook.com/v14.0/${senderId}?fields=first_name,last_name,profile_pic&access_token=${config.KEY_FACEBOOK}`;
   const perfil = await axios.get(url);
 
-  /* $perfil = await request({
-    uri: 'https://graph.facebook.com/v14.0/' + senderId,
-    qs: {
-      access_token: config.KEY_FACEBOOK,
-      fields: 'first_name,last_name,profile_pic',
-    },
-    method: 'GET',
-  }).catch((error) => {
-    return;
-  }); */
-
-  console.log(perfil);
-
   user = await prospecto.findOne({ idUser: senderId });
   if (!user) {
     await prospecto.create({
       idUser: senderId,
-      nombre: perfil.first_name + ' ' + perfil.last_name,
-      foto: perfil.profile_pic,
+      nombre: perfil.data.first_name + ' ' + perfil.data.last_name,
+      foto: perfil.data.profile_pic,
     });
   } else {
     // validar si la fecha de actualizacion es diferente a la fecha actual
