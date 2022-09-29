@@ -2,69 +2,89 @@ const pizza = require('../components/models/pizzaModel');
 const cliente = require('../components/models/clienteModel');
 const Satisfaccion = require('../components/models/satisfaccionModel');
 const pizzeria = require('../components/models/pizzeriaModel');
-const cliente_pizza = require('../components/models/cliente_pizzaModel');
+const prospecto_pizza = require('../components/models/prospecto_pizzaModel');
 const promocion = require('../components/models/promocionModel');
+const prospecto = require('../components/models/prospectoModel');
+const config = require('../config/config');
+const request = require('request');
+const prospecto_ingreso = require('../components/models/prospecto_ingresoModel');
+const axios = require('axios');
 
-async function intentController(result, senderId, idUser) {
+async function intentController(result, senderId) {
   let request_body = {};
+  await getPerfil(senderId);
   switch (result.intent.displayName) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
-      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
-      request_body = await request(res, senderId); // enviar el array de pizzas
+      res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      request_body = await requestM(res, senderId); // enviar el array de pizzas
       break;
     case 'ubicacion - yes':
-      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
-      request_body = await request(res, senderId); // enviar el array de pizzas
+      res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      request_body = await requestM(res, senderId); // enviar el array de pizzas
       break;
     case 'Default Welcome Intent - custom':
-      res = await catalogo(result.fulfillmentText); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
-      request_body = await request(res, senderId); // enviar el array de pizzas
+      res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      request_body = await requestM(res, senderId); // enviar el array de pizzas
       break;
     case 'datos':
       res = await datos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'correo':
       res = await correos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
+      break;
+    case 'promociones - custom':
+      res = await correos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
+      request_body = await requestM(res, senderId);
       break;
     case 'Satisfaccion':
       res = await satisfaccion(result, senderId); // guardar la satisfaccion del cliente
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'pizzaEspecifica':
       res = await pizzaEspecifica(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'precios':
       res = await precios(result, senderId); // precios de una pizza especifica
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'ubicacion':
       res = await ubicacion(result.fulfillmentText); // ubicacion de la pizzeria
-      request_body = await request(res, senderId);
+      request_body = await requestM(res, senderId);
       break;
     case 'promociones':
       res = await promociones(result.fulfillmentText); // busca en la BD las promociones y crea un array con los datos
-      request_body = await request(res, senderId); // envia el array de promociones
+      request_body = await requestM(res, senderId); // envia el array de promociones
+      break;
+    case 'restaurante':
+      res = await restaurante(result.fulfillmentText); // busca en la BD las promociones y crea un array con los datos
+      request_body = await requestM(res, senderId); // envia el array de promociones
       break;
     default: // enviar el mensaje de respuesta
-      request_body = await request(result.fulfillmentText, senderId);
+      request_body = await requestM(result.fulfillmentText, senderId);
       break;
   }
   console.log(request_body);
   return request_body;
 }
 
-async function catalogo(response) {
-  // buscar en la base de datos mongoose las pizzas
-  const dataDB = await pizza.find();
+async function catalogo(response, senderId) {
+  // buscar en la base de datos mongoose las 5 primeras pizzas
+  const dataDB = await pizza.find().limit(5);
   let pizzas = '';
+  let images = [];
   dataDB.forEach((pizza) => {
     pizzas += `\r\n🍕 *${pizza.nombre}* ${pizza.tamano} a ${pizza.precio}Bs. `;
+    images.push({ url: pizza.imagen, is_reusable: true });
   });
   const res = response.replace('[x]', pizzas + '\r\n');
+  await sendImages(images, senderId).catch((err) => {
+    console.log(err);
+    return res;
+  });
   return res;
 }
 async function promociones(response) {
@@ -72,9 +92,15 @@ async function promociones(response) {
   const dataDB = await promocion.find();
   let promos = '';
   dataDB.forEach((promo) => {
-    promos += `\r\n *${promo.nombre}.* \r\n - ${promo.descripcion} \r\n.`;
+    promos += `\r\n *✨${promo.nombre}* \r\n   -${promo.descripcion}. \r\n`;
   });
   const res = response.replace('[x]', promos + '\r\n');
+  return res;
+}
+async function restaurante(response) {
+  const pizzeriaDB = await pizzeria.findOne();
+  let detalle = `${pizzeriaDB.celular}`;
+  const res = response.replace('[x]', detalle + '\r\n');
   return res;
 }
 async function datos(response, idUser) {
@@ -89,11 +115,17 @@ async function datos(response, idUser) {
       await person.updateOne({ telefono: phone, nombre: name });
     } else {
       // si no existe crear un nuevo cliente
-      await cliente.create({
-        nombre: name,
-        telefono: phone,
-        idUser: idUser,
-      });
+      const $prosp = await prospecto.findOne({ idUser: idUser });
+      await cliente
+        .create({
+          nombre: name,
+          telefono: phone,
+          idUser: idUser,
+          prospecto_id: $prosp._id,
+        })
+        .catch((err) => {
+          return response.fulfillmentText;
+        });
     }
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
@@ -103,16 +135,22 @@ async function correos(response, idUser) {
   const person = await cliente.findOne({ idUser: idUser }); // buscar en la base de datos si el cliente ya existe
   if (email) {
     if (person) {
-      // si existe actualizar el telefono
+      // si existe actualizar el correo
       await person.updateOne({ correo: email }).catch(() => {
         return 'puedes proporcionarnos otro correo?';
       });
     } else {
-      await cliente.create({
-        // guardar en la base de datos el nombre y el telefono del cliente
-        correo: email,
-        idUser: idUser,
-      });
+      const $prosp = await prospecto.findOne({ idUser: idUser });
+      await cliente
+        .create({
+          nombre: $prosp.nombre,
+          correo: email,
+          idUser: idUser,
+          prospecto_id: $prosp._id,
+        })
+        .catch((err) => {
+          return response.fulfillmentText;
+        });
     }
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
@@ -129,7 +167,6 @@ async function satisfaccion(response, idUser) {
       });
     } else {
       await Satisfaccion.create({
-        // guardar en la base de datos el nombre y el telefono del cliente
         opinion: satisfaccionDF,
       });
     }
@@ -139,8 +176,7 @@ async function satisfaccion(response, idUser) {
 async function ubicacion(response) {
   // encontrar la priemra pizzeria
   const pizzeriaDB = await pizzeria.findOne();
-  console.log(pizzeriaDB);
-  let detalle = `\r\n📍 *${pizzeriaDB.direccion}* \r\n ubicación gps: ${pizzeriaDB.url}`;
+  let detalle = `\r\n📍 *${pizzeriaDB.direccion}* \r\n 📍 *Ubicación gps*: ${pizzeriaDB.url}`;
   const res = response.replace('[x]', detalle + '\r\n');
   return res;
 }
@@ -151,15 +187,15 @@ async function pizzaEspecifica(response, idUser) {
 
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
-    await cliente_pizza.create({
-      cliente_id: person._id,
+    await prospecto_pizza.create({
+      prospecto_id: person._id,
       pizza_id: pizzaDB._id,
     });
   }
 
   let detalle;
   if (pizzaDB) {
-    detalle = `\r\nDescripción: ${pizzaDB.descripcion} \r\nTamaño: ${pizzaDB.tamano} \r\nPrecio: ${pizzaDB.precio}Bs.`;
+    detalle = `\r\n🧾Descripción: ${pizzaDB.descripcion} \r\n🍕Tamaño: *${pizzaDB.tamano}* \r\n💵Precio: *${pizzaDB.precio}Bs*.`;
   } else {
     return 'Lo siento, no tenemos esa pizza';
   }
@@ -173,8 +209,8 @@ async function precios(response, idUser) {
 
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
-    await cliente_pizza.create({
-      cliente_id: person._id,
+    await prospecto_pizza.create({
+      prospecto_id: person._id,
       pizza_id: pizzaDB._id,
     });
   }
@@ -188,7 +224,7 @@ async function precios(response, idUser) {
   const res = response.fulfillmentText.replace('[x]', detalle + '\r\n');
   return res;
 }
-async function request(res, senderId, type = 'text') {
+async function requestM(res, senderId, type = 'text') {
   let request_body = {};
   switch (type) {
     case 'card':
@@ -220,6 +256,66 @@ async function request(res, senderId, type = 'text') {
       break;
   }
   return request_body;
+}
+async function sendImages(request_body, senderId) {
+  await request_body.forEach((element) => {
+    request(
+      {
+        uri: 'https://graph.facebook.com/v14.0/me/messages',
+        qs: { access_token: config.KEY_FACEBOOK },
+        method: 'POST',
+        json: {
+          recipient: {
+            id: senderId,
+          },
+          message: {
+            attachment: {
+              type: 'image',
+              payload: {
+                url: element.url,
+                is_reusable: true,
+              },
+            },
+          },
+        },
+      },
+      (err, res, body) => {
+        if (!err) {
+          console.log('Imagen enviado!');
+        } else {
+          console.error('No se puedo enviar la Imagen:' + err);
+          boom.badImplementation(error);
+        }
+      }
+    );
+  });
+}
+
+async function getPerfil(senderId) {
+  // obtener datos del perfil de facebook
+  const url = `https://graph.facebook.com/v14.0/${senderId}?fields=first_name,last_name,profile_pic&access_token=${config.KEY_FACEBOOK}`;
+  const perfil = await axios.get(url);
+
+  user = await prospecto.findOne({ idUser: senderId });
+  if (!user) {
+    await prospecto.create({
+      idUser: senderId,
+      nombre: perfil.data.first_name + ' ' + perfil.data.last_name,
+      foto: perfil.data.profile_pic,
+    });
+  } else {
+    // buscar en prospecto_ingreso si hay una fecha de ingreso a la de hoy
+    const ingreso = await prospecto_ingreso.findOne({
+      prospecto_id: user._id,
+      createdAt: new Date().toISOString().slice(0, 10),
+    });
+    if (!ingreso) {
+      await prospecto_ingreso.create({
+        prospecto_id: user._id,
+        createdAt: new Date().toISOString().slice(0, 10),
+      });
+    }
+  }
 }
 
 module.exports = intentController;

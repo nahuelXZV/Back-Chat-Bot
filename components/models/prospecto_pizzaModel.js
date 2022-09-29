@@ -6,10 +6,12 @@ const mySchema = new Schema({
   pizza_id: {
     allowNull: false,
     type: mongoose.Types.ObjectId,
+    ref: 'Pizza',
   },
-  cliente_id: {
+  prospecto_id: {
     allowNull: false,
     type: mongoose.Types.ObjectId,
+    ref: 'Prospecto',
   },
   createdAt: {
     allowNull: false,
@@ -19,5 +21,5 @@ const mySchema = new Schema({
   },
 });
 
-const model = mongoose.model('Cliente_pizza', mySchema);
+const model = mongoose.model('Prospecto_pizza', mySchema);
 module.exports = model;

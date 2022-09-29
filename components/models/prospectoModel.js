@@ -4,30 +4,18 @@ const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
   nombre: {
-    allowNull: true,
     type: String,
   },
-  telefono: {
-    allowNull: true,
+  foto: {
     type: String,
   },
   correo: {
     allowNull: true,
     type: String,
   },
-  tipo: {
-    allowNull: true,
-    type: String,
-  },
   idUser: {
     allowNull: false,
     type: String,
-  },
-  prospecto_id: {
-    allowNull: true,
-    type: mongoose.Types.ObjectId,
-    field: 'prospecto_id',
-    ref: 'Prospecto',
   },
   createdAt: {
     allowNull: false,
@@ -37,5 +25,5 @@ const mySchema = new Schema({
   },
 });
 
-const model = mongoose.model('Cliente', mySchema);
+const model = mongoose.model('Prospecto', mySchema);
 module.exports = model;
