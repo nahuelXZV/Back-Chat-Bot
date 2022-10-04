@@ -1,13 +1,13 @@
-const pizza = require('../components/models/pizzaModel');
-const cliente = require('../components/models/clienteModel');
-const Satisfaccion = require('../components/models/satisfaccionModel');
-const pizzeria = require('../components/models/pizzeriaModel');
+const prospecto_ingreso = require('../components/models/prospecto_ingresoModel');
 const prospecto_pizza = require('../components/models/prospecto_pizzaModel');
+const Satisfaccion = require('../components/models/satisfaccionModel');
 const promocion = require('../components/models/promocionModel');
 const prospecto = require('../components/models/prospectoModel');
+const pizzeria = require('../components/models/pizzeriaModel');
+const cliente = require('../components/models/clienteModel');
+const pizza = require('../components/models/pizzaModel');
 const config = require('../config/config');
 const request = require('request');
-const prospecto_ingreso = require('../components/models/prospecto_ingresoModel');
 const axios = require('axios');
 
 async function intentController(result, senderId) {
@@ -70,7 +70,6 @@ async function intentController(result, senderId) {
   console.log(request_body);
   return request_body;
 }
-
 async function catalogo(response, senderId) {
   // buscar en la base de datos mongoose las 5 primeras pizzas
   const dataDB = await pizza.find().limit(5);
@@ -290,7 +289,6 @@ async function sendImages(request_body, senderId) {
     );
   });
 }
-
 async function getPerfil(senderId) {
   // obtener datos del perfil de facebook
   const url = `https://graph.facebook.com/v14.0/${senderId}?fields=first_name,last_name,profile_pic&access_token=${config.KEY_FACEBOOK}`;
@@ -307,15 +305,14 @@ async function getPerfil(senderId) {
     // buscar en prospecto_ingreso si hay una fecha de ingreso a la de hoy
     const ingreso = await prospecto_ingreso.findOne({
       prospecto_id: user._id,
-      createdAt: new Date().toISOString().slice(0, 10),
+      createdAt: new Date().toISOString().slice(0, 13),
     });
     if (!ingreso) {
       await prospecto_ingreso.create({
         prospecto_id: user._id,
-        createdAt: new Date().toISOString().slice(0, 10),
+        createdAt: new Date().toISOString().slice(0, 13),
       });
     }
   }
 }
-
 module.exports = intentController;
