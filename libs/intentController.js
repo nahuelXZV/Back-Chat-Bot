@@ -302,9 +302,19 @@ async function getPerfil(senderId) {
       foto: perfil.data.profile_pic,
     });
   } else {
-    // buscar en prospecto_ingreso si hay una fecha de ingreso y solo hora de hoy
-    const date = new Date().toISOString().slice(0, 10);
-    const time = new Date().toISOString().slice(11, 13) + ':00:00';
+    // buscar en prospecto_ingreso si hay una fecha de ingreso y solo hora de hoy bolivia
+
+    const date = new Date()
+      .toLocaleString('es-ES', {
+        timeZone: 'America/La_Paz',
+      })
+      .slice(0, 10);
+    const time =
+      new Date()
+        .toLocaleString('es-ES', {
+          timeZone: 'America/La_Paz',
+        })
+        .slice(11, 13) + ':00:00';
 
     const ingreso = await prospecto_ingreso.findOne({
       prospecto_id: user._id,
