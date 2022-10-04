@@ -182,7 +182,7 @@ async function ubicacion(response) {
 async function pizzaEspecifica(response, idUser) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
-  const person = await cliente.findOne({ idUser: idUser });
+  const person = await prospecto.findOne({ idUser: idUser });
 
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
@@ -204,7 +204,7 @@ async function pizzaEspecifica(response, idUser) {
 async function precios(response, idUser) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
-  const person = await cliente.findOne({ idUser: idUser });
+  const person = await prospecto.findOne({ idUser: idUser });
 
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
