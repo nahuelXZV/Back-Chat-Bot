@@ -303,14 +303,17 @@ async function getPerfil(senderId) {
     });
   } else {
     // buscar en prospecto_ingreso si hay una fecha de ingreso y solo hora de hoy
+    const date = new Date().toISOString().slice(0, 10);
+    const time = new Date().toISOString().slice(11, 13) + ':00:00';
+
     const ingreso = await prospecto_ingreso.findOne({
       prospecto_id: user._id,
-      createdAt: moment().format('YYYY-MM-DD-HH'),
+      createdAt: date + ' ' + time,
     });
     if (!ingreso) {
       await prospecto_ingreso.create({
         prospecto_id: user._id,
-        createdAt: moment().format('YYYY-MM-DD-HH'),
+        createdAt: date + ' ' + time,
       });
     }
   }
