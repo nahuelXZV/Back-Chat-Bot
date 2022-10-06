@@ -369,6 +369,9 @@ async function getPerfil(senderId) {
       idUser: senderId,
       nombre: perfil.data.first_name + ' ' + perfil.data.last_name,
       foto: perfil.data.profile_pic,
+      createdAt: new Date().toLocaleString('es-ES', {
+        timeZone: 'America/La_Paz',
+      }),
     });
   } else {
     // buscar en prospecto_ingreso si hay una fecha de ingreso y solo hora de hoy bolivia
