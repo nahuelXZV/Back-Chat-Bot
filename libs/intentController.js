@@ -137,6 +137,9 @@ async function datos(response, idUser) {
           telefono: phone,
           idUser: idUser,
           prospecto_id: $prosp._id,
+          createdAt: new Date().toLocaleString('es-ES', {
+            timeZone: 'America/La_Paz',
+          }),
         })
         .catch((err) => {
           return response.fulfillmentText;
@@ -163,6 +166,9 @@ async function correos(response, idUser) {
           correo: email,
           idUser: idUser,
           prospecto_id: $prosp._id,
+          createdAt: new Date().toLocaleString('es-ES', {
+            timeZone: 'America/La_Paz',
+          }),
         })
         .catch((err) => {
           return response.fulfillmentText;
@@ -181,10 +187,16 @@ async function satisfaccion(response, idUser) {
       await Satisfaccion.create({
         opinion: satisfaccionDF,
         cliente_id: person._id,
+        createdAt: new Date().toLocaleString('es-ES', {
+          timeZone: 'America/La_Paz',
+        }),
       });
     } else {
       await Satisfaccion.create({
         opinion: satisfaccionDF,
+        createdAt: new Date().toLocaleString('es-ES', {
+          timeZone: 'America/La_Paz',
+        }),
       });
     }
   }
@@ -218,6 +230,9 @@ async function pizzaEspecifica(response, idUser) {
     await prospecto_pizza.create({
       prospecto_id: person._id,
       pizza_id: pizzaDB._id,
+      createdAt: new Date().toLocaleString('es-ES', {
+        timeZone: 'America/La_Paz',
+      }),
     });
   }
 
@@ -241,6 +256,9 @@ async function pedido(response, idUser) {
     await prospecto_pizza.create({
       prospecto_id: person._id,
       pizza_id: pizzaDB._id,
+      createdAt: new Date().toLocaleString('es-ES', {
+        timeZone: 'America/La_Paz',
+      }),
     });
   }
   return response.fulfillmentText;
@@ -256,6 +274,9 @@ async function precios(response, idUser) {
     await prospecto_pizza.create({
       prospecto_id: person._id,
       pizza_id: pizzaDB._id,
+      createdAt: new Date().toLocaleString('es-ES', {
+        timeZone: 'America/La_Paz',
+      }),
     });
   }
 
