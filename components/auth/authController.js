@@ -1,9 +1,9 @@
 const UserController = require('../users/userController');
 const config = require('../../config/config');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 
 const controller = new UserController();
 

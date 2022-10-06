@@ -248,6 +248,7 @@ async function pizzaEspecifica(response, idUser) {
 
 async function pedido(response, idUser) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
+  // validar que exista la pizza
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ idUser: idUser });
 
@@ -260,6 +261,8 @@ async function pedido(response, idUser) {
         timeZone: 'America/La_Paz',
       }),
     });
+  } else {
+    return 'Lo sentimos no tenemos esa pizza';
   }
   return response.fulfillmentText;
 }

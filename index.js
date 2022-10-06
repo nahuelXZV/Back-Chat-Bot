@@ -4,12 +4,12 @@ const {
   boomErrorHandler,
 } = require('./middleware/errorHandler');
 const mainRouter = require('./network/mainRouter'); // Load mainRouter
+const mongoose = require('./libs/mongoose'); // Load mongoose
 const corsOptions = require('./libs/cors');
 const config = require('./config/config');
-const express = require('express'); // Load Express
 const bodyParser = require('body-parser'); // Load body-parser
+const express = require('express'); // Load Express
 const cors = require('cors');
-const mongoose = require('./libs/mongoose'); // Load mongoose
 
 const app = express();
 const port = config.PORT;

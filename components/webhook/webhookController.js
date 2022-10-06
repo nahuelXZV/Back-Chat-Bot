@@ -1,9 +1,9 @@
 const intentController = require('../../libs/intentController');
-const boom = require('@hapi/boom');
-const config = require('../../config/config');
-const request = require('request');
 const dialogflow = require('../../libs/dialog_flow');
 const { error } = require('../../network/response');
+const config = require('../../config/config');
+const boom = require('@hapi/boom');
+const request = require('request');
 
 class webhookController {
   constructor() {}

@@ -1,6 +1,6 @@
-const usersRouter = require('../components/users/userRoute');
-// const authRouter = require('../components/auth/authRoute');
 const webhookRoute = require('../components/webhook/webhookRoute');
+// const authRouter = require('../components/auth/authRoute');
+const usersRouter = require('../components/users/userRoute');
 const express = require('express');
 
 function mainRouter(app) {

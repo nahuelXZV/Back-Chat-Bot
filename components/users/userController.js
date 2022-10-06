@@ -1,6 +1,6 @@
 const model = require('./userModel');
-const bcrypt = require('bcrypt');
 const boom = require('@hapi/boom');
+const bcrypt = require('bcrypt');
 
 class UserController {
   constructor() {}
