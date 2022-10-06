@@ -27,6 +27,10 @@ async function intentController(result, senderId) {
       res = await catalogo(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
       request_body = await requestM(res, senderId); // enviar el array de pizzas
       break;
+    case 'Default Welcome Intent':
+      res = await welcome(result.fulfillmentText, senderId); // buscar en la base de datos las pizzas y crear un array con los nombres de las pizzas y sus precios
+      request_body = await requestM(res, senderId); // enviar el array de pizzas
+      break;
     case 'datos':
       res = await datos(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await requestM(res, senderId);
@@ -43,8 +47,16 @@ async function intentController(result, senderId) {
       res = await satisfaccion(result, senderId); // guardar la satisfaccion del cliente
       request_body = await requestM(res, senderId);
       break;
+    case 'datos - custom':
+      res = await satisfaccion(result, senderId); // guardar la satisfaccion del cliente
+      request_body = await requestM(res, senderId);
+      break;
     case 'pizzaEspecifica':
       res = await pizzaEspecifica(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
+      request_body = await requestM(res, senderId);
+      break;
+    case 'pedido':
+      res = await pedido(result, senderId); // guardar en la base de datos el nombre y el telefono del cliente
       request_body = await requestM(res, senderId);
       break;
     case 'precios':
@@ -70,6 +82,7 @@ async function intentController(result, senderId) {
   console.log(request_body);
   return request_body;
 }
+
 async function catalogo(response, senderId) {
   // buscar en la base de datos mongoose las 5 primeras pizzas
   const dataDB = await pizza.find().limit(5);
@@ -86,6 +99,7 @@ async function catalogo(response, senderId) {
   });
   return res;
 }
+
 async function promociones(response) {
   // buscar en la base de datos mongoose las pizzas
   const dataDB = await promocion.find().limit(5);
@@ -96,12 +110,14 @@ async function promociones(response) {
   const res = response.replace('[x]', promos);
   return res;
 }
+
 async function restaurante(response) {
   const pizzeriaDB = await pizzeria.findOne();
   let detalle = `${pizzeriaDB.celular}`;
   const res = response.replace('[x]', detalle + '\r\n');
   return res;
 }
+
 async function datos(response, idUser) {
   const name =
     response.parameters?.fields?.person?.structValue?.fields?.name?.stringValue; // nombre del cliente
@@ -129,6 +145,7 @@ async function datos(response, idUser) {
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
 }
+
 async function correos(response, idUser) {
   const email = response.parameters?.fields?.email?.stringValue; // nombre del cliente
   const person = await cliente.findOne({ idUser: idUser }); // buscar en la base de datos si el cliente ya existe
@@ -154,6 +171,7 @@ async function correos(response, idUser) {
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
 }
+
 async function satisfaccion(response, idUser) {
   const satisfaccionDF = await response.parameters?.fields?.satisfaccion
     ?.stringValue; // nombre del cliente
@@ -172,6 +190,7 @@ async function satisfaccion(response, idUser) {
   }
   return response.fulfillmentText; // enviar el mensaje de respuesta
 }
+
 async function ubicacion(response) {
   // encontrar la priemra pizzeria
   const pizzeriaDB = await pizzeria.findOne();
@@ -179,6 +198,16 @@ async function ubicacion(response) {
   const res = response.replace('[x]', detalle + '\r\n');
   return res;
 }
+
+async function welcome(response, idUser) {
+  // encontrar la priemra pizzeria
+  const person = await prospecto.findOne({ idUser: idUser });
+  // substring antes del espacio
+  const name = person.nombre.substring(0, person.nombre.indexOf(' '));
+  const res = response.replace('[x]', name);
+  return res;
+}
+
 async function pizzaEspecifica(response, idUser) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
@@ -201,6 +230,22 @@ async function pizzaEspecifica(response, idUser) {
   const res = response.fulfillmentText.replace('[x]', detalle + '\r\n');
   return res;
 }
+
+async function pedido(response, idUser) {
+  const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
+  const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
+  const person = await prospecto.findOne({ idUser: idUser });
+
+  // guardar la pizza buscada en la base de datos
+  if (person && pizzaDB) {
+    await prospecto_pizza.create({
+      prospecto_id: person._id,
+      pizza_id: pizzaDB._id,
+    });
+  }
+  return response.fulfillmentText;
+}
+
 async function precios(response, idUser) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
@@ -223,6 +268,7 @@ async function precios(response, idUser) {
   const res = response.fulfillmentText.replace('[x]', detalle + '\r\n');
   return res;
 }
+
 async function requestM(res, senderId, type = 'text') {
   let request_body = {};
   switch (type) {
@@ -256,6 +302,7 @@ async function requestM(res, senderId, type = 'text') {
   }
   return request_body;
 }
+
 async function sendImages(request_body, senderId) {
   await request_body.forEach((element) => {
     request(
@@ -289,6 +336,7 @@ async function sendImages(request_body, senderId) {
     );
   });
 }
+
 async function getPerfil(senderId) {
   // obtener datos del perfil de facebook
   const url = `https://graph.facebook.com/v14.0/${senderId}?fields=first_name,last_name,profile_pic&access_token=${config.KEY_FACEBOOK}`;
@@ -328,4 +376,5 @@ async function getPerfil(senderId) {
     }
   }
 }
+
 module.exports = intentController;
