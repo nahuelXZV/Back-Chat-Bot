@@ -3,25 +3,21 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
-  opinion: {
+  montoTotal: {
     allowNull: false,
-    type: String,
+    type: Number,
+    field: 'monto_total',
   },
-  valoracion: {
+  fecha: {
     allowNull: false,
-    type: String,
+    type: date,
   },
   clienteId: {
     allowNull: false,
     type: Schema.Types.ObjectId,
     ref: 'Cliente',
-    field: 'cliente_id',
-  },
-  fecha: {
-    allowNull: false,
-    type: Date,
   },
 });
 
-const model = mongoose.model('Satisfaccion', mySchema);
+const model = mongoose.model('Carrito', mySchema);
 module.exports = model;

@@ -3,23 +3,30 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
-  pizzaId: {
+  cantidad: {
     allowNull: false,
+    type: Number,
+  },
+  precio: {
+    allowNull: false,
+    type: Number,
+  },
+  pizzaId: {
     type: Schema.Types.ObjectId,
     ref: 'Pizza',
     field: 'pizza_id',
   },
-  prospectoId: {
-    allowNull: false,
+  carritoId: {
     type: Schema.Types.ObjectId,
-    ref: 'Prospecto',
-    field: 'prospecto_id',
+    ref: 'Carrito',
+    field: 'carrito_id',
   },
-  fecha: {
+  createdAt: {
     allowNull: false,
     type: Date,
+    field: 'create_at',
   },
 });
 
-const model = mongoose.model('ProspectoPizza', mySchema);
+const model = mongoose.model('CarritoPizza', mySchema);
 module.exports = model;

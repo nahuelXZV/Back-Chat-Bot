@@ -6,30 +6,27 @@ const mySchema = new Schema({
   nombre: {
     allowNull: false,
     type: String,
-    required: true,
   },
   descripcion: {
     allowNull: false,
     type: String,
-    required: false,
   },
   precio: {
+    allowNull: false,
     type: Number,
-    required: true,
   },
   tamano: {
+    allowNull: false,
     type: String,
-    required: true,
   },
   imagen: {
+    allowNull: false,
     type: String,
-    required: false,
   },
   createdAt: {
     allowNull: false,
     type: Date,
     field: 'create_at',
-    defaultValue: Date.now,
   },
 });
 

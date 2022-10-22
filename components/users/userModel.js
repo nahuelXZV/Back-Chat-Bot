@@ -18,6 +18,20 @@ const mySchema = new Schema({
     required: true,
     default: 'public',
   },
+  tipo: {
+    type: String,
+    required: true,
+  },
+  empleadoId: {
+    allowNull: true,
+    type: Schema.Types.ObjectId,
+    ref: 'Empleado',
+  },
+  clienteId: {
+    allowNull: true,
+    type: Schema.Types.ObjectId,
+    ref: 'Cliente',
+  },
   createdAt: {
     type: Date,
     required: true,

@@ -3,21 +3,22 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
-  pizza: {
-    type: mongoose.Types.ObjectId,
+  pizzaId: {
+    type: Schema.Types.ObjectId,
     ref: 'Pizza',
+    field: 'pizza_id',
   },
-  promocion: {
-    type: mongoose.Types.ObjectId,
+  promocionId: {
+    type: Schema.Types.ObjectId,
     ref: 'Promocion',
+    field: 'promocion_id',
   },
   createdAt: {
     allowNull: false,
     type: Date,
     field: 'create_at',
-    defaultValue: Date.now,
   },
 });
 
-const model = mongoose.model('Pizza_promocion', mySchema);
+const model = mongoose.model('PizzaPromo', mySchema);
 module.exports = model;

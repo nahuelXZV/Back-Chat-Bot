@@ -23,6 +23,7 @@ class UserController {
       email: newUser.email,
       role: newUser.role,
       createdAt: newUser.createdAt,
+      tipo: newUser.tipo,
     };
     return userCreated;
   }

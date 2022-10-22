@@ -7,20 +7,13 @@ const mySchema = new Schema({
     allowNull: true,
     type: String,
   },
+  direccion: {
+    allowNull: true,
+    type: String,
+  },
   telefono: {
     allowNull: true,
     type: String,
-  },
-  FacebookId: {
-    allowNull: false,
-    type: String,
-    field: 'facebook_id',
-  },
-  prospectoId: {
-    allowNull: true,
-    field: 'prospecto_id',
-    type: Schema.Types.ObjectId,
-    ref: 'Prospecto',
   },
   createdAt: {
     allowNull: false,
@@ -29,5 +22,5 @@ const mySchema = new Schema({
   },
 });
 
-const model = mongoose.model('Cliente', mySchema);
+const model = mongoose.model('Empleado', mySchema);
 module.exports = model;
