@@ -13,17 +13,17 @@ const mySchema = new Schema({
   },
   fechaInicio: {
     allowNull: false,
-    type: Date,
+    type: String,
     field: 'fecha_inicio',
   },
   fechaFin: {
     allowNull: false,
-    type: Date,
+    type: String,
     field: 'fecha_fin',
   },
   createdAt: {
     allowNull: false,
-    type: Date,
+    type: String,
     field: 'create_at',
   },
 });

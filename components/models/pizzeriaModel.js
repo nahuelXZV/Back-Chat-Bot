@@ -28,7 +28,7 @@ const mySchema = new Schema({
   },
   createdAt: {
     allowNull: false,
-    type: Date,
+    type: String,
     field: 'create_at',
   },
 });

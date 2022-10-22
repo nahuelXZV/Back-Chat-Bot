@@ -10,17 +10,12 @@ const mySchema = new Schema({
   },
   fecha: {
     allowNull: false,
-    type: date,
+    type: String,
   },
   clienteId: {
     allowNull: false,
     type: Schema.Types.ObjectId,
     ref: 'Cliente',
-  },
-  createdAt: {
-    allowNull: false,
-    type: Date,
-    field: 'create_at',
   },
 });
 

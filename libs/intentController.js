@@ -376,27 +376,21 @@ async function getPerfil(facebookId) {
     });
   } else {
     // buscar en prospecto_ingreso si hay una fecha de ingreso y solo hora de hoy bolivia
-    const date = new Date()
-      .toLocaleString('es-ES', {
-        timeZone: 'America/La_Paz',
-      })
-      .slice(0, 14) + ':00:00';
-    console.log(date);
-    /*     const time =
+    const date =
       new Date()
         .toLocaleString('es-ES', {
           timeZone: 'America/La_Paz',
         })
-        .slice(11, 13) + ':00:00'; */
-
+        .slice(0, 14) + ':00:00';
+    console.log(date);
     const ingreso = await prospecto_ingreso.findOne({
       prospectoId: user._id,
-      fecha: date /* + ' ' + time */,
+      fecha: date,
     });
     if (!ingreso) {
       await prospecto_ingreso.create({
         prospectoId: user._id,
-        fecha: date /* + ' ' + time, */,
+        fecha: date,
       });
     }
   }
