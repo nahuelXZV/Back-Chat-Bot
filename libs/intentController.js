@@ -380,8 +380,8 @@ async function getPerfil(facebookId) {
       .toLocaleString('es-ES', {
         timeZone: 'America/La_Paz',
       })
-      .slice(0, 13);
-
+      .slice(0, 19);
+    console.log(date);
     /*     const time =
       new Date()
         .toLocaleString('es-ES', {

@@ -10,7 +10,7 @@ const mySchema = new Schema({
   },
   fecha: {
     allowNull: false,
-    type: Date,
+    type: String,
   },
 });
 
