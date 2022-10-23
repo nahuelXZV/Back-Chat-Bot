@@ -12,10 +12,10 @@ const mySchema = new Schema({
     allowNull: false,
     type: String,
   },
-  clienteId: {
+  prospectoId: {
     allowNull: false,
     type: Schema.Types.ObjectId,
-    ref: 'Cliente',
+    ref: 'Prospecto',
   },
   empleadoId: {
     allowNull: false,

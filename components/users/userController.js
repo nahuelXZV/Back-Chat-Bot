@@ -64,17 +64,12 @@ class UserController {
   }
 
   async findByEmail(email) {
-    const rta = await models.User.findOne({
-      where: { email },
-      attributes: { exclude: ['password', 'recoveryToken'] },
-    });
+    const rta = await model.findOne({ email });
     return rta;
   }
 
   async findByEmailAuth(email) {
-    const rta = await models.User.findOne({
-      where: { email },
-    });
+    const rta = await model.findOne({ email });
     return rta;
   }
 

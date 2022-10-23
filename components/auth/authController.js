@@ -17,7 +17,17 @@ class AuthController {
     if (!isMatch) {
       throw boom.unauthorized();
     }
-    return user;
+    // eliminar el campo password de la respuesta
+    let newUser = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+      tipo: user.tipo,
+      empleadoId: user.empleadoId,
+      clienteId: user.clienteId,
+    }
+    return newUser;
   }
 
   signToken(user) {

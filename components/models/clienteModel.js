@@ -11,6 +11,11 @@ const mySchema = new Schema({
     allowNull: true,
     type: String,
   },
+  tipo: {
+    allowNull: true,
+    type: String,
+    default: 'normal',
+  },
   FacebookId: {
     allowNull: false,
     type: String,

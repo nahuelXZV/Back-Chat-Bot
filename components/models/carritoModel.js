@@ -17,6 +17,11 @@ const mySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Cliente',
   },
+  prospectoId: {
+    allowNull: false,
+    type: Schema.Types.ObjectId,
+    ref: 'Prospecto',
+  },
 });
 
 const model = mongoose.model('Carrito', mySchema);
