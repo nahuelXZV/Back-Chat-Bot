@@ -13,12 +13,12 @@ const mySchema = new Schema({
     type: String,
   },
   clienteId: {
-    allowNull: false,
+    allowNull: true,
     type: Schema.Types.ObjectId,
     ref: 'Cliente',
   },
   prospectoId: {
-    allowNull: false,
+    allowNull: true,
     type: Schema.Types.ObjectId,
     ref: 'Prospecto',
   },

@@ -6,6 +6,10 @@ const prospecto = require('../components/models/prospectoModel');
 const pizzeria = require('../components/models/pizzeriaModel');
 const cliente = require('../components/models/clienteModel');
 const pizza = require('../components/models/pizzaModel');
+const carrito = require('../components/models/carritoModel');
+const detalle_carrito = require('../components/models/carrito_pizzaModel');
+const pedidos = require('../components/models/pedidoModel');
+const detalle_pedido = require('../components/models/pedido_pizzaModel');
 const config = require('../config/config');
 const request = require('request');
 const axios = require('axios');
@@ -56,7 +60,7 @@ async function intentController(result, facebookId) {
       request_body = await requestM(res, facebookId);
       break;
     case 'pedido':
-      res = await pedido(result, facebookId); // guardar en la base de datos el nombre y el telefono del cliente
+      res = await pedido(result, facebookId);
       request_body = await requestM(res, facebookId);
       break;
     case 'precios':
@@ -72,8 +76,16 @@ async function intentController(result, facebookId) {
       request_body = await requestM(res, facebookId); // envia el array de promociones
       break;
     case 'restaurante':
-      res = await restaurante(result.fulfillmentText); // busca en la BD las promociones y crea un array con los datos
-      request_body = await requestM(res, facebookId); // envia el array de promociones
+      res = await restaurante(result.fulfillmentText);
+      request_body = await requestM(res, facebookId);
+      break;
+    case 'confirmacion - yes':
+      res = await confirmacion(result.fulfillmentText);
+      request_body = await requestM(res, facebookId);
+      break;
+    case 'carrito':
+      res = await confirmacion(result.fulfillmentText);
+      request_body = await requestM(res, facebookId);
       break;
     default: // enviar el mensaje de respuesta
       request_body = await requestM(result.fulfillmentText, facebookId);
@@ -210,7 +222,7 @@ async function ubicacion(response) {
 }
 
 async function welcome(response, facebookId) {
-  // encontrar la priemra pizzeria
+  // encontrar la primera pizzeria
   const person = await prospecto.findOne({ facebookId: facebookId });
   // substring antes del espacio
   const name = person.nombre.substring(0, person.nombre.indexOf(' '));
@@ -246,21 +258,99 @@ async function pizzaEspecifica(response, facebookId) {
 
 async function pedido(response, facebookId) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
+  let cantidad = await response.parameters?.fields?.number?.stringValue;
+  if (!isNaN(cantidad)) {
+    cantidad = parseInt(cantidad);
+  }
   // validar que exista la pizza
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
+  let cesta = await carrito.findOne({ clienteId: facebookId });
 
-  // guardar la pizza buscada en la base de datos
-  if (person && pizzaDB) {
-    await prospecto_pizza.create({
-      prospectoId: person._id,
+  if (person && pizzaDB) {//Existe pizza y prospecto
+    const clienteDB = await cliente.findOne({ prospectoId: person._id });
+    if (!cesta) {//no existe el carrito
+      if (clienteDB) {//es cliente
+        cesta = await carrito.create({
+          montoTotal: 0,
+          fecha: new Date().toLocaleString('es-ES', {
+            timeZone: 'America/La_Paz',
+          }),
+          clienteId: clienteDB._id,
+        });
+      } else {//es prospecto
+        cesta = await carrito.create({
+          montoTotal: 0,
+          fecha: new Date().toLocaleString('es-ES', {
+            timeZone: 'America/La_Paz',
+          }),
+          prospectoId: person._id,
+        });
+      }
+    }
+    //creando el detalle
+    let precio = cantidad * pizzaDB.precio;
+    await detalle_carrito.create({
+      cantidad: cantidad,
+      precio: precio,
       pizzaId: pizzaDB._id,
-      fecha: new Date().toLocaleString('es-ES', {
+      carritoId: cesta._id,
+      createdAt: new Date().toLocaleString('es-ES', {
         timeZone: 'America/La_Paz',
       }),
     });
-  } else {
+    //actualizando monto carrito
+    let monto = cesta.montoTotal + precio;
+    cesta.updateOne({ montoTotal: monto });
+
+  } else {//no existe pizza
     return 'Lo sentimos no tenemos esa pizza';
+  }
+  return response.fulfillmentText;
+}
+
+async function confirmacion(response, facebookId) {
+  const pros = await prospecto.findOne({ facebookId: facebookId });
+  let client = await cliente.findOne({ facebookId: facebookId });
+
+  if (client || pros) {
+    if (!client) {
+      client = await cliente.create({
+        nombre: pros.nombre,
+        facebookId: facebookId,
+        prospectoId: pros._id,
+        createdAt: new Date().toLocaleString('es-ES', {
+          timeZone: 'America/La_Paz',
+        }),
+      });
+      await carrito.findOneAndUpdate({ prospectoId: pros._id }, { clienteId: client._id });
+    }
+    const cest = await carrito.findOne({ clienteId: client._id });
+    if (cest) {
+      const pedidoc = await pedidos.create({
+        montoTotal: cest.montoTotal,
+        fecha: new Date().toLocaleString('es-ES', {
+          timeZone: 'America/La_Paz',
+        }),
+        clienteId: client._id,
+      });
+      const detalleDB = await detalle_carrito.findOne({ carritoId: cest._id });
+      detalleDB.forEach((detalle) => {
+        detalle_pedido.create({
+          pedidoId: pedidoc._id,
+          cantidad: detalle.cantidad,
+          precio: detalle.precio,
+          pizzaId: detalle.pizzaId,
+          createdAt: new Date().toLocaleString('es-ES', {
+            timeZone: 'America/La_Paz',
+          }),
+        });
+      });
+      await detalle_carrito.remove({ carritoId: cest._id });
+      await carrito.remove({ _id: cest._id }, { justOne: true });
+    } else {
+      return 'Su carrito se encuentra vacio';
+    }
   }
   return response.fulfillmentText;
 }
