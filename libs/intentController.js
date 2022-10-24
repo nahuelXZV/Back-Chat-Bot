@@ -265,7 +265,14 @@ async function pedido(response, facebookId) {
   // validar que exista la pizza
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
-  let cesta = await carrito.findOne({ clienteId: facebookId });
+  const client = await cliente.findOne({facebookId: facebookId});
+  let cesta;
+  if(client){
+    cesta = await carrito.findOne({ clienteId: person._id });
+  }else{
+    cesta = await carrito.findOne({ prospectoId: person._id });
+  }
+ 
 
   if (person && pizzaDB) {//Existe pizza y prospecto
     const clienteDB = await cliente.findOne({ prospectoId: person._id });
