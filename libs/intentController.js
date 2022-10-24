@@ -258,11 +258,7 @@ async function pizzaEspecifica(response, facebookId) {
 
 async function pedido(response, facebookId) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
-  const cantidad = await response.parameters?.fields?.number?.structValue;
-  const c= await response.parameters?.fields?.number?.Value;
-  const cc= await response.parameters?.fields?.number;
-  const c1 = await response.parameters?.fields?.number?.get;
-  return `La cantidad es  ${cantidad} , ${c} , ${c1}, ${cc}`;
+  const cantidad = await response.parameters?.fields?.number?.intValue;
   let cant = parseInt(cantidad);
 
   // validar que exista la pizza
