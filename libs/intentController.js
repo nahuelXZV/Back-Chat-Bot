@@ -457,7 +457,7 @@ async function sendImages(request_body, facebookId) {
 
 async function getPerfil(facebookId) {
   // obtener datos del perfil de facebook
-  const url = `https://graph.facebook.com/v14.0/${facebookId}?fields=first_name,last_name,profile_pic,email&access_token=${config.KEY_FACEBOOK}`;
+  const url = `https://graph.facebook.com/v14.0/${facebookId}?fields=first_name,last_name,email,profile_pic&access_token=${config.KEY_FACEBOOK}`;
   const perfil = await axios.get(url);
   console.log(perfil.data);
   user = await prospecto.findOne({ facebookId: facebookId });
