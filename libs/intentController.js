@@ -259,7 +259,8 @@ async function pizzaEspecifica(response, facebookId) {
 async function pedido(response, facebookId) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const cantidad = await response.parameters?.fields?.number?.intValue;
-  console.log(response);
+  console.log(response.parameters.fields);
+  return response.parameters.fields;
   let cant = parseInt(cantidad);
 
   // validar que exista la pizza
@@ -268,14 +269,14 @@ async function pedido(response, facebookId) {
   const client = await cliente.findOne({facebookId: facebookId});
   let cesta;
   if(client){
-    cesta = await carrito.findOne({ clienteId: person._id });
+    cesta = await carrito.findOne({ clienteId: client._id });
   }else{
     cesta = await carrito.findOne({ prospectoId: person._id });
   }
  
 
   if (person && pizzaDB) {//Existe pizza y prospecto
-    const clienteDB = await cliente.findOne({ prospectoId: person._id });
+    const clienteDB = await cliente.findOne({ prospectoId: client._id });
     if (!cesta) {//no existe el carrito
       if (clienteDB) {//es cliente
         cesta = await carrito.create({
