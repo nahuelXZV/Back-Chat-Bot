@@ -259,9 +259,8 @@ async function pizzaEspecifica(response, facebookId) {
 async function pedido(response, facebookId) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   let cantidad = await response.parameters?.fields?.number?.stringValue;
-  if (!isNaN(cantidad)) {
-    cantidad = parseInt(cantidad);
-  }
+  cantidad = parseInt(cantidad);
+
   // validar que exista la pizza
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
