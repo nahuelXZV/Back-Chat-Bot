@@ -82,6 +82,7 @@ class UserController {
         prospectoId: prospecto._id,
       });
       let ultimoIngreso = ingresos[ingresos.length - 1];
+      // obtener el tiempo entre el ultimo ingreso y la fecha actual
       const contactos = await contacto.find({ prospectoId: prospecto._id });
       let ultimoContacto = contactos[contactos.length - 1];
       let newProspecto = {
