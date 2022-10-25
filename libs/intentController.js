@@ -132,7 +132,7 @@ async function datos(response, facebookId) {
   const name =
     response.parameters?.fields?.person?.structValue?.fields?.name?.stringValue; // nombre del cliente
   const phone = response.parameters?.fields?.phone?.stringValue; // telefono del cliente
-  const person = await cliente.findOne({ facebookId: facebookId }); // buscar en la base de datos si el cliente ya existe
+  const person = await cliente.findOne({ FacebookId: facebookId }); // buscar en la base de datos si el cliente ya existe
 
   if (name && phone) {
     if (person) {
@@ -145,7 +145,7 @@ async function datos(response, facebookId) {
         .create({
           nombre: name,
           telefono: phone,
-          facebookId: facebookId,
+          FacebookId: facebookId,
           prospectoId: $prosp._id,
           createdAt: new Date().toLocaleString('es-ES', {
             timeZone: 'America/La_Paz',
@@ -161,7 +161,7 @@ async function datos(response, facebookId) {
 
 async function correos(response, facebookId) {
   const email = response.parameters?.fields?.email?.stringValue; // nombre del cliente
-  const person = await cliente.findOne({ facebookId: facebookId }); // buscar en la base de datos si el cliente ya existe
+  const person = await cliente.findOne({ FacebookId: facebookId }); // buscar en la base de datos si el cliente ya existe
   if (email) {
     if (person) {
       // si existe actualizar el correo
@@ -174,7 +174,7 @@ async function correos(response, facebookId) {
         .create({
           nombre: $prosp.nombre,
           correo: email,
-          facebookId: facebookId,
+          FacebookId: facebookId,
           prospectoId: $prosp._id,
           createdAt: new Date().toLocaleString('es-ES', {
             timeZone: 'America/La_Paz',
@@ -191,7 +191,7 @@ async function correos(response, facebookId) {
 async function satisfaccion(response, facebookId) {
   const satisfaccionDF = await response.parameters?.fields?.satisfaccion
     ?.stringValue; // nombre del cliente
-  const person = await cliente.findOne({ facebookId: facebookId }); // buscar en la base de datos si el cliente ya existe
+  const person = await cliente.findOne({ FacebookId: facebookId }); // buscar en la base de datos si el cliente ya existe
   if (satisfaccionDF) {
     if (person) {
       await Satisfaccion.create({
@@ -264,7 +264,7 @@ async function pedido(response, facebookId) {
   // validar que exista la pizza
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
-  const client = await cliente.findOne({facebookId: facebookId});
+  const client = await cliente.findOne({FacebookId: facebookId});
   let cesta;
   if(client){
     cesta = await carrito.findOne({ clienteId: client._id });
@@ -307,7 +307,7 @@ async function pedido(response, facebookId) {
     });
     //actualizando monto carrito
     let monto = cesta.montoTotal + precio;
-    cesta.updateOne({ montoTotal: monto });
+    await carrito.findByIdAndUpdate({_id: cesta._id},{montoTotal: monto});
 
   } else {//no existe pizza
     return 'Lo sentimos no tenemos esa pizza';
@@ -317,13 +317,13 @@ async function pedido(response, facebookId) {
 
 async function confirmacion(response, facebookId) {
   const pros = await prospecto.findOne({ facebookId: facebookId });
-  let client = await cliente.findOne({ facebookId: facebookId });
+  let client = await cliente.findOne({ FacebookId: facebookId });
 
   if (client || pros) {
     if (!client) {
       client = await cliente.create({
         nombre: pros.nombre,
-        facebookId: facebookId,
+        FacebookId: facebookId,
         prospectoId: pros._id,
         createdAt: new Date().toLocaleString('es-ES', {
           timeZone: 'America/La_Paz',
