@@ -1,7 +1,6 @@
 const dialogflow = require('@google-cloud/dialogflow');
-const { listenerCount } = require('nodemailer/lib/xoauth2');
-const uuid = require('uuid');
 const config = require('../config/config');
+const uuid = require('uuid');
 
 const PROYECT_ID = config.PROYECT_ID;
 

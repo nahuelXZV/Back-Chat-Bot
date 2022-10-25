@@ -11,29 +11,26 @@ const mySchema = new Schema({
     allowNull: true,
     type: String,
   },
-  correo: {
-    allowNull: true,
-    type: String,
-  },
   tipo: {
     allowNull: true,
     type: String,
+    default: 'normal',
   },
-  idUser: {
+  FacebookId: {
     allowNull: false,
     type: String,
+    field: 'facebook_id',
   },
-  prospecto_id: {
+  prospectoId: {
     allowNull: true,
-    type: mongoose.Types.ObjectId,
     field: 'prospecto_id',
+    type: Schema.Types.ObjectId,
     ref: 'Prospecto',
   },
   createdAt: {
     allowNull: false,
-    type: Date,
+    type: String,
     field: 'create_at',
-    defaultValue: Date.now,
   },
 });
 

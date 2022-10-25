@@ -1,7 +1,7 @@
-const response = require('../../network/response');
 const webhookController = require('./webhookController');
-const express = require('express');
+const response = require('../../network/response');
 const config = require('../../config/config');
+const express = require('express');
 
 const router = express.Router();
 const controller = new webhookController();

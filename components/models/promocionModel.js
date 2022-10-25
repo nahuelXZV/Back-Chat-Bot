@@ -4,18 +4,27 @@ const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
   nombre: {
+    allowNull: false,
     type: String,
-    required: true,
   },
   descripcion: {
+    allowNull: false,
     type: String,
-    required: false,
+  },
+  fechaInicio: {
+    allowNull: false,
+    type: String,
+    field: 'fecha_inicio',
+  },
+  fechaFin: {
+    allowNull: false,
+    type: String,
+    field: 'fecha_fin',
   },
   createdAt: {
     allowNull: false,
-    type: Date,
+    type: String,
     field: 'create_at',
-    defaultValue: Date.now,
   },
 });
 

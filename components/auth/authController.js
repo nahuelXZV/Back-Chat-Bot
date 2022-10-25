@@ -1,9 +1,9 @@
 const UserController = require('../users/userController');
 const config = require('../../config/config');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 
 const controller = new UserController();
 
@@ -17,7 +17,17 @@ class AuthController {
     if (!isMatch) {
       throw boom.unauthorized();
     }
-    return user;
+    // eliminar el campo password de la respuesta
+    let newUser = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+      tipo: user.tipo,
+      empleadoId: user.empleadoId,
+      clienteId: user.clienteId,
+    }
+    return newUser;
   }
 
   signToken(user) {

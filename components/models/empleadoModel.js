@@ -4,23 +4,15 @@ const Schema = mongoose.Schema;
 
 const mySchema = new Schema({
   nombre: {
-    allowNull: false,
+    allowNull: true,
     type: String,
   },
-  descripcion: {
-    allowNull: false,
+  direccion: {
+    allowNull: true,
     type: String,
   },
-  precio: {
-    allowNull: false,
-    type: Number,
-  },
-  tamano: {
-    allowNull: false,
-    type: String,
-  },
-  imagen: {
-    allowNull: false,
+  telefono: {
+    allowNull: true,
     type: String,
   },
   createdAt: {
@@ -30,5 +22,5 @@ const mySchema = new Schema({
   },
 });
 
-const model = mongoose.model('Pizza', mySchema);
+const model = mongoose.model('Empleado', mySchema);
 module.exports = model;

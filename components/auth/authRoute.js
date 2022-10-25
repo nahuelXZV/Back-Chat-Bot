@@ -2,8 +2,8 @@ const validatorHandler = require('../../middleware/validatorHandler');
 const response = require('../../network/response');
 const AuthController = require('./authController');
 const { loginSchema } = require('./authSchema');
-const express = require('express');
 const passport = require('passport');
+const express = require('express');
 
 const router = express.Router();
 const controller = new AuthController();

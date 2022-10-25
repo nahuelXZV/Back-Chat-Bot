@@ -1,6 +1,6 @@
 const model = require('./userModel');
-const bcrypt = require('bcrypt');
 const boom = require('@hapi/boom');
+const bcrypt = require('bcrypt');
 
 class UserController {
   constructor() {}
@@ -23,6 +23,7 @@ class UserController {
       email: newUser.email,
       role: newUser.role,
       createdAt: newUser.createdAt,
+      tipo: newUser.tipo,
     };
     return userCreated;
   }
@@ -63,17 +64,12 @@ class UserController {
   }
 
   async findByEmail(email) {
-    const rta = await models.User.findOne({
-      where: { email },
-      attributes: { exclude: ['password', 'recoveryToken'] },
-    });
+    const rta = await model.findOne({ email });
     return rta;
   }
 
   async findByEmailAuth(email) {
-    const rta = await models.User.findOne({
-      where: { email },
-    });
+    const rta = await model.findOne({ email });
     return rta;
   }
 
