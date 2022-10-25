@@ -360,6 +360,10 @@ async function confirmacion(response, facebookId) {
           }),
         });
       });
+      const c = await pedidos.count({clienteId: client._id});
+      if(c == 3){
+        await cliente.findOneAndUpdate({_id: client._id},{tipo: 'frecuente'});
+      } 
       await detalle_carrito.remove({ carritoId: cest._id });
       await carrito.remove({ _id: cest._id }, { justOne: true });
     } else {
