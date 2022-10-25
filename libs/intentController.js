@@ -340,9 +340,9 @@ async function confirmacion(response, facebookId) {
         }),
         clienteId: client._id,
       });
-      const detalleDB = await detalle_carrito.findOne({ carritoId: cest._id });
+      const detalleDB = await detalle_carrito.find({ carritoId: cest._id });
       detalleDB.forEach((detalle) => {
-        detalle_pedido.create({
+          detalle_pedido.create({
           pedidoId: pedidoc._id,
           cantidad: detalle.cantidad,
           precio: detalle.precio,
