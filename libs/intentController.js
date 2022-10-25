@@ -358,6 +358,8 @@ async function confirmacion(response, facebookId) {
           }),
         });
       });
+      const c = await pedidos.find({clienteId: client._id}).count();
+      if(c == 3) cliente.findByIdAndUpdate({_id: client._id},{tipo:"frecuente"});
       await detalle_carrito.remove({ carritoId: cest._id });
       await carrito.remove({ _id: cest._id }, { justOne: true });
     } else {
