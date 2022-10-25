@@ -3,6 +3,7 @@ const model = require('../models/clienteModel');
 const pedido = require('../models/pedidoModel');
 const prospectoIngreso = require('../models/prospecto_ingresoModel');
 const pedidoPizza = require('../models/pedido_pizzaModel');
+const prospecto = require('../models/prospectoModel');
 
 class UserController {
   constructor() {}
@@ -55,25 +56,48 @@ class UserController {
   // obtener todos los datos de los prospectos
   async getAll() {
     let listaClientes = [];
-    const clientes = await model.find().populate('prospectoId').limit(10);
+    const clientes = await model.find().limit(10);
     for (let i = 0; i < clientes.length; i++) {
       const person = clientes[i];
+      const prosp = await prospecto.findOne({ _id: person.prospectoId });
       const pedidos = await pedido.find({
         clienteId: person._id,
       });
       let ultimoPedido = pedidos[pedidos.length - 1];
-
       const ingresos = await prospectoIngreso.find({
-        prospectoId: person.prospectoId,
+        prospectoId: prosp._id,
       });
       let ultimoIngreso = ingresos[ingresos.length - 1];
 
+      let montoCompra = 0;
+      let diasAcumulados = 0;
+      for (let j = 0; j < pedidos.length; j++) {
+        const element = pedidos[j];
+        montoCompra += element.montoTotal;
+        if (j < pedidos.length - 1) {
+          // obtener los dias entre dos fechas
+          let fecha1 = new Date(element.fecha);
+          let fecha2 = new Date(pedidos[j + 1].fecha);
+          // obtenemos los milisegundos de cada fecha
+          let diff = Math.abs(fecha1.getTime() - fecha2.getTime());
+          // obtenemos los dias
+          let dias = Math.ceil(diff / (1000 * 3600 * 24));
+          diasAcumulados += dias;
+        }
+      }
+      const promedioCompra = montoCompra / pedidos.length;
+      const promedioDias = diasAcumulados / pedidos.length;
+
       let newCliente = {
         cliente: person,
+        prospecto: prosp,
         ultimoPedido: ultimoPedido,
         pedidos: pedidos.length,
         ultimoIngreso: ultimoIngreso,
         ingresos: ingresos.length,
+        promedioCompra: promedioCompra,
+        frecuencia: promedioDias,
+        notificaciones: 0,
       };
       listaClientes.push(newCliente);
     }
