@@ -80,11 +80,11 @@ async function intentController(result, facebookId) {
       request_body = await requestM(res, facebookId);
       break;
     case 'confirmacion - yes':
-      res = await confirmacion(result.fulfillmentText);
+      res = await confirmacion(result, facebookId);
       request_body = await requestM(res, facebookId);
       break;
     case 'carrito':
-      res = await confirmacion(result.fulfillmentText);
+      res = await confirmacion(result, facebookId);
       request_body = await requestM(res, facebookId);
       break;
     default: // enviar el mensaje de respuesta
@@ -323,10 +323,10 @@ async function confirmacion(response, facebookId) {
   let client = await cliente.findOne({ FacebookId: facebookId });
 
   if (client || pros) {
-    if (!client) {
+    if (client == null) {
       client = await cliente.create({
         nombre: pros.nombre,
-        FacebookId: facebookId,
+        FacebookId: pros.facebookId,
         prospectoId: pros._id,
         createdAt: new Date().toLocaleString('es-ES', {
           timeZone: 'America/La_Paz',
@@ -346,9 +346,9 @@ async function confirmacion(response, facebookId) {
         }),
         clienteId: client._id,
       });
-      const detalleDB = await detalle_carrito.findOne({ carritoId: cest._id });
+      const detalleDB = await detalle_carrito.find({ carritoId: cest._id });
       detalleDB.forEach((detalle) => {
-        detalle_pedido.create({
+          detalle_pedido.create({
           pedidoId: pedidoc._id,
           cantidad: detalle.cantidad,
           precio: detalle.precio,
