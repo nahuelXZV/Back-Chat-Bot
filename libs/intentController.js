@@ -80,11 +80,11 @@ async function intentController(result, facebookId) {
       request_body = await requestM(res, facebookId);
       break;
     case 'confirmacion - yes':
-      res = await confirmacion(result.fulfillmentText);
+      res = await confirmacion(result, facebookId);
       request_body = await requestM(res, facebookId);
       break;
     case 'carrito':
-      res = await confirmacion(result.fulfillmentText);
+      res = await confirmacion(result, facebookId);
       request_body = await requestM(res, facebookId);
       break;
     default: // enviar el mensaje de respuesta
@@ -320,7 +320,7 @@ async function confirmacion(response, facebookId) {
   let client = await cliente.findOne({ FacebookId: facebookId });
 
   if (client || pros) {
-    if (client == null && pros) {
+    if (client == null) {
       client = await cliente.create({
         nombre: pros.nombre,
         FacebookId: pros.facebookId,
