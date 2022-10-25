@@ -141,6 +141,8 @@ async function datos(response, facebookId) {
     } else {
       // si no existe crear un nuevo cliente
       const $prosp = await prospecto.findOne({ facebookId: facebookId });
+      $prosp.tipo = 'cliente';
+      $prosp.save();
       await cliente
         .create({
           nombre: name,
@@ -348,7 +350,7 @@ async function confirmacion(response, facebookId) {
       });
       const detalleDB = await detalle_carrito.find({ carritoId: cest._id });
       detalleDB.forEach((detalle) => {
-          detalle_pedido.create({
+        detalle_pedido.create({
           pedidoId: pedidoc._id,
           cantidad: detalle.cantidad,
           precio: detalle.precio,

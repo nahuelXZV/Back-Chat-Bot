@@ -75,7 +75,7 @@ class UserController {
   // obtener todos los datos de los prospectos
   async getAll() {
     let listaProspectos = [];
-    const prospectos = await model.find().limit(10);
+    const prospectos = await model.find({ tipo: 'prospecto' }).limit(10);
     for (let i = 0; i < prospectos.length; i++) {
       const prospecto = prospectos[i];
       const ingresos = await prospectoIngreso.find({
