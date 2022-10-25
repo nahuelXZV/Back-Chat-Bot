@@ -274,7 +274,7 @@ async function pedido(response, facebookId) {
  
 
   if (person && pizzaDB) {//Existe pizza y prospecto
-    const clienteDB = await cliente.findOne({ prospectoId: client._id });
+    const clienteDB = await cliente.findOne({ prospectoId: person._id });
     if (!cesta) {//no existe el carrito
       if (clienteDB) {//es cliente
         cesta = await carrito.create({
