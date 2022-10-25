@@ -264,19 +264,21 @@ async function pedido(response, facebookId) {
   // validar que exista la pizza
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
-  const client = await cliente.findOne({FacebookId: facebookId});
+  const client = await cliente.findOne({ FacebookId: facebookId });
   let cesta;
-  if(client){
+  if (client) {
     cesta = await carrito.findOne({ clienteId: client._id });
-  }else{
+  } else {
     cesta = await carrito.findOne({ prospectoId: person._id });
   }
- 
 
-  if (person && pizzaDB) {//Existe pizza y prospecto
+  if (person && pizzaDB) {
+    //Existe pizza y prospecto
     const clienteDB = await cliente.findOne({ prospectoId: person._id });
-    if (!cesta) {//no existe el carrito
-      if (clienteDB) {//es cliente
+    if (!cesta) {
+      //no existe el carrito
+      if (clienteDB) {
+        //es cliente
         cesta = await carrito.create({
           montoTotal: 0,
           fecha: new Date().toLocaleString('es-ES', {
@@ -284,7 +286,8 @@ async function pedido(response, facebookId) {
           }),
           clienteId: clienteDB._id,
         });
-      } else {//es prospecto
+      } else {
+        //es prospecto
         cesta = await carrito.create({
           montoTotal: 0,
           fecha: new Date().toLocaleString('es-ES', {
@@ -307,9 +310,9 @@ async function pedido(response, facebookId) {
     });
     //actualizando monto carrito
     let monto = cesta.montoTotal + precio;
-    await carrito.findByIdAndUpdate({_id: cesta._id},{montoTotal: monto});
-
-  } else {//no existe pizza
+    await carrito.findByIdAndUpdate({ _id: cesta._id }, { montoTotal: monto });
+  } else {
+    //no existe pizza
     return 'Lo sentimos no tenemos esa pizza';
   }
   return response.fulfillmentText;
@@ -329,7 +332,10 @@ async function confirmacion(response, facebookId) {
           timeZone: 'America/La_Paz',
         }),
       });
-      await carrito.findOneAndUpdate({ prospectoId: pros._id }, { clienteId: client._id });
+      await carrito.findOneAndUpdate(
+        { prospectoId: pros._id },
+        { clienteId: client._id }
+      );
     }
     const cest = await carrito.findOne({ clienteId: client._id });
     if (cest) {

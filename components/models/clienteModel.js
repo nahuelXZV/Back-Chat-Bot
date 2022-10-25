@@ -7,6 +7,10 @@ const mySchema = new Schema({
     allowNull: true,
     type: String,
   },
+  correo: {
+    allowNull: true,
+    type: String,
+  },
   telefono: {
     allowNull: true,
     type: String,

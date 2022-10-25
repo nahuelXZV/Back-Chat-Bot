@@ -11,14 +11,15 @@ const mySchema = new Schema({
     allowNull: false,
     type: String,
   },
-  correo: {
-    allowNull: true,
-    type: String,
-  },
   facebookId: {
     allowNull: false,
     type: String,
     field: 'facebook_id',
+  },
+  tipo: {
+    allowNull: true,
+    type: String,
+    default: 'prospecto',
   },
   createdAt: {
     allowNull: false,

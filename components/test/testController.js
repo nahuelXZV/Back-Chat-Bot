@@ -1,4 +1,4 @@
-const model = require('../models/empleadoModel');
+const model = require('../models/prospectoModel');
 const boom = require('@hapi/boom');
 
 class UserController {
