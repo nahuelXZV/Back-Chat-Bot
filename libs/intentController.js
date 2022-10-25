@@ -320,10 +320,10 @@ async function confirmacion(response, facebookId) {
   let client = await cliente.findOne({ FacebookId: facebookId });
 
   if (client || pros) {
-    if (client == null) {
+    if (client == null && pros) {
       client = await cliente.create({
         nombre: pros.nombre,
-        FacebookId: facebookId,
+        FacebookId: pros.facebookId,
         prospectoId: pros._id,
         createdAt: new Date().toLocaleString('es-ES', {
           timeZone: 'America/La_Paz',
