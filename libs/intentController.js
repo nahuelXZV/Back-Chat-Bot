@@ -366,7 +366,6 @@ async function confirmacion(response, facebookId) {
       return 'Su carrito se encuentra vacio';
     }
   }
-  const r = `${response.fulfillmentText} , ${c}`
   return response.fulfillmentText;
 }
 
