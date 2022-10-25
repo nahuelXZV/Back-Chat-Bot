@@ -320,7 +320,7 @@ async function confirmacion(response, facebookId) {
   let client = await cliente.findOne({ FacebookId: facebookId });
 
   if (client || pros) {
-    if (!client) {
+    if (client == null) {
       client = await cliente.create({
         nombre: pros.nombre,
         FacebookId: facebookId,
