@@ -140,18 +140,18 @@ async function datos(response, facebookId) {
       await person.updateOne({ telefono: phone, nombre: name });
     } else {
       // si no existe crear un nuevo cliente
-      const $prosp = await prospecto.findOne({ facebookId: facebookId });
-      $prosp.tipo = 'cliente';
-      $prosp.save();
+      const prosp = await prospecto.findOne({ facebookId: facebookId });
+      await prosp.updateOne({ tipo: 'cliente' });
       await cliente
         .create({
           nombre: name,
           telefono: phone,
           FacebookId: facebookId,
-          prospectoId: $prosp._id,
+          prospectoId: prosp._id,
           createdAt: new Date().toLocaleString('es-ES', {
             timeZone: 'America/La_Paz',
           }),
+          tipo: 'cliente',
         })
         .catch((err) => {
           return response.fulfillmentText;
@@ -171,16 +171,18 @@ async function correos(response, facebookId) {
         return 'puedes proporcionarnos otro correo?';
       });
     } else {
-      const $prosp = await prospecto.findOne({ facebookId: facebookId });
+      const prosp = await prospecto.findOne({ facebookId: facebookId });
+      await prosp.updateOne({ tipo: 'cliente' });
       await cliente
         .create({
-          nombre: $prosp.nombre,
+          nombre: prosp.nombre,
           correo: email,
           FacebookId: facebookId,
-          prospectoId: $prosp._id,
+          prospectoId: prosp._id,
           createdAt: new Date().toLocaleString('es-ES', {
             timeZone: 'America/La_Paz',
           }),
+          tipo: 'cliente',
         })
         .catch((err) => {
           return response.fulfillmentText;
@@ -333,7 +335,9 @@ async function confirmacion(response, facebookId) {
         createdAt: new Date().toLocaleString('es-ES', {
           timeZone: 'America/La_Paz',
         }),
+        Tipo: 'Cliente',
       });
+      await pros.updateOne({ tipo: 'cliente' });
       await carrito.findOneAndUpdate(
         { prospectoId: pros._id },
         { clienteId: client._id }
@@ -360,10 +364,13 @@ async function confirmacion(response, facebookId) {
           }),
         });
       });
-      const c = await pedidos.count({clienteId: client._id});
-      if(c == 3){
-        await cliente.findOneAndUpdate({_id: client._id},{tipo: 'frecuente'});
-      } 
+      const c = await pedidos.count({ clienteId: client._id });
+      if (c == 3) {
+        await cliente.findOneAndUpdate(
+          { _id: client._id },
+          { tipo: 'frecuente' }
+        );
+      }
       await detalle_carrito.remove({ carritoId: cest._id });
       await carrito.remove({ _id: cest._id }, { justOne: true });
     } else {
