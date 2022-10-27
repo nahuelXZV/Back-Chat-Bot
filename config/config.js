@@ -6,7 +6,7 @@ const config = {
   APP_URL: process.env.APP_URL || 'http://localhost:3000',
   PORT: process.env.PORT || 3000,
 
-  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:8080',
+  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
 
   KEY_FACEBOOK: process.env.KEY_FACEBOOK || 'key',
   KEY_VALIDATION: process.env.KEY_VALIDATION || 'key',

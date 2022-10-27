@@ -18,7 +18,7 @@ const mySchema = new Schema({
     required: true,
     default: 'public',
   },
-  tipo: {
+  /*tipo: {
     type: String,
     required: true,
   },
@@ -31,7 +31,7 @@ const mySchema = new Schema({
     allowNull: true,
     type: Schema.Types.ObjectId,
     ref: 'Cliente',
-  },
+  },*/
   createdAt: {
     type: Date,
     required: true,

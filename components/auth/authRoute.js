@@ -9,15 +9,18 @@ const router = express.Router();
 const controller = new AuthController();
 
 router.post(
-  '/login',
-  validatorHandler(loginSchema, 'body'), // validate body
-  passport.authenticate('local', { session: false }), // passport authenticate
+  '/login',     
+  //validatorHandler(loginSchema, 'body'), // validate body
+  //passport.authenticate('local', { session: false }), // passport authenticate
   async (req, res, next) => {
     try {
-      const user = req.user;
-      const data = controller.signToken(user);
-      response.success(req, res, data, 200);
+      const user = req.body;         
+      //const data = controller.signToken(user);      
+      const data = await controller.getUser(user.email, user.password);  
+      console.log(data);     
+      res.send(data);            
     } catch (error) {
+      console.log("error");
       next(error);
     }
   }

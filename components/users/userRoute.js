@@ -25,6 +25,13 @@ router.get(
   }
 );
 
+router.post(
+  '/register', async (req,resp)=>{
+    let user = await controller.add(req.body);          
+    resp.send(user);
+  }
+);
+
 router.get(
   '/:id',
   // passport.authenticate('jwt', { session: false }), // Middleware de autenticación

@@ -9,24 +9,24 @@ const controller = new UserController();
 
 class AuthController {
   async getUser(email, password) {
-    const user = await controller.findByEmailAuth(email); // find user by email
+    const user = await controller.findByEmailAuth(email); // find user by email        
     if (!user) {
-      throw boom.unauthorized();
+      return {error: "email"};      
     }
-    const isMatch = await bcrypt.compare(password, user.password); // compare password with hash
+    const isMatch = await bcrypt.compare(password, user.password); // compare password with hash    
     if (!isMatch) {
-      throw boom.unauthorized();
+      return {error: "password"};
     }
     // eliminar el campo password de la respuesta
     let newUser = {
       id: user._id,
       email: user.email,
       role: user.role,
-      createdAt: user.createdAt,
-      tipo: user.tipo,
-      empleadoId: user.empleadoId,
-      clienteId: user.clienteId,
-    }
+      createdAt: user.createdAt,      
+      //tipo: user.tipo,
+      //empleadoId: user.empleadoId,
+      //clienteId: user.clienteId,
+    }    
     return newUser;
   }
 

@@ -5,27 +5,34 @@ const bcrypt = require('bcrypt');
 class UserController {
   constructor() {}
 
-  async add(data) {
-    // encrypt password
-    const hash = await bcrypt.hash(data.password, 10);
-    // creamos la estructura del usuario
-    const user = {
-      ...data,
-      password: hash,
-    };
-    // creamos el usuario
-    const newUser = new model(user);
-    newUser.save();
-
-    //sacamos el password y el recoveryToken del newUser
-    const userCreated = {
-      id: newUser._id,
-      email: newUser.email,
-      role: newUser.role,
-      createdAt: newUser.createdAt,
-      tipo: newUser.tipo,
-    };
-    return userCreated;
+  async add(data) {    
+    const userexist = await this.findByEmailAuth(data.email);    
+    if (!userexist) {      
+      if(data.password.length < 8){
+        return {error: "password"};
+      }
+      // encrypt password    
+      const hash = await bcrypt.hash(data.password, 10);
+      // creamos la estructura del usuario
+      const user = {
+        email: data.email,
+        password: hash,      
+      };
+      // creamos el usuario
+      const newUser = new model(user);
+      newUser.save();    
+      //sacamos el password y el recoveryToken del newUser
+      const userCreated = {
+        id: newUser._id,
+        email: newUser.email,
+        role: newUser.role,
+        createdAt: newUser.createdAt //,
+        //tipo: newUser.tipo,
+      };    
+      return userCreated;
+    } else {      
+      return {error: "email"};
+    }
   }
 
   async edit(data, id) {
