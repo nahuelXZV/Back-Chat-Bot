@@ -5,7 +5,7 @@ const prospectoIngreso = require('../models/prospecto_ingresoModel');
 const contacto = require('../models/contactoModel');
 
 class UserController {
-  constructor() {}
+  constructor() { }
 
   async add(data) {
     const newPedido = new model(data);
@@ -110,8 +110,8 @@ class UserController {
     if (!prospecto) {
       throw boom.notFound('Prospecto not found');
     }
-    const contactos = await contacto.find({ prospectoId: prospecto._id });
-    return contactos;
+    const contactos = await contacto.find({ prospectoId: prospecto._id }).populate('prospectoId');
+    return { contactos, prospecto };
   }
 }
 

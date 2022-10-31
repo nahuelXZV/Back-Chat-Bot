@@ -3,7 +3,7 @@ const detalle = require('../models/pedido_pizzaModel');
 const boom = require('@hapi/boom');
 
 class UserController {
-  constructor() {}
+  constructor() { }
 
   async add(data) {
     const newPedido = new model(data);

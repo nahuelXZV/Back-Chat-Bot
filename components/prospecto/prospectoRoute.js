@@ -61,6 +61,7 @@ router.post('/', async (req, res, next) => {
 
 router.post('/contacto', async (req, res, next) => {
   try {
+    console.log(req.body);
     const body = req.body; //used for getting the body
     const rest = await controller.addContacto(body);
     response.success(req, res, rest, 201);
