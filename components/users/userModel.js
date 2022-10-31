@@ -21,12 +21,13 @@ const mySchema = new Schema({
   /*tipo: {
     type: String,
     required: true,
-  },
+  },*/
   empleadoId: {
     allowNull: true,
     type: Schema.Types.ObjectId,
     ref: 'Empleado',
   },
+  /*
   clienteId: {
     allowNull: true,
     type: Schema.Types.ObjectId,

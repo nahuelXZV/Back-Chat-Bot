@@ -1,22 +1,33 @@
 const model = require('./userModel');
+const empleado = require('../models/empleadoModel');
 const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
 
 class UserController {
   constructor() {}
 
-  async add(data) {    
+  async add(data) {        
     const userexist = await this.findByEmailAuth(data.email);    
     if (!userexist) {      
       if(data.password.length < 8){
         return {error: "password"};
       }
       // encrypt password    
-      const hash = await bcrypt.hash(data.password, 10);
+      const hash = await bcrypt.hash(data.password, 10);      
+      // creamos la estructura del usuario
+      const emp = {
+        nombre: data.nombre,
+        direccion: data.direccion,
+        telefono: data.telefono,      
+      };
+      //creamos el empleado
+      const newEmpleado = new empleado(emp);
+      newEmpleado.save();
       // creamos la estructura del usuario
       const user = {
         email: data.email,
-        password: hash,      
+        password: hash,   
+        empleadoId: newEmpleado._id,   
       };
       // creamos el usuario
       const newUser = new model(user);
@@ -24,10 +35,9 @@ class UserController {
       //sacamos el password y el recoveryToken del newUser
       const userCreated = {
         id: newUser._id,
-        email: newUser.email,
-        role: newUser.role,
-        createdAt: newUser.createdAt //,
-        //tipo: newUser.tipo,
+        nombre: newEmpleado.nombre,
+        email: newUser.email,        
+        createdAt: newUser.createdAt,        
       };    
       return userCreated;
     } else {      
