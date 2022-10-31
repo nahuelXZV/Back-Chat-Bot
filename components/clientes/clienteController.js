@@ -6,7 +6,7 @@ const pedidoPizza = require('../models/pedido_pizzaModel');
 const prospecto = require('../models/prospectoModel');
 
 class UserController {
-  constructor() {}
+  constructor() { }
 
   async add(data) {
     const newPedido = new model(data);
@@ -76,8 +76,8 @@ class UserController {
         montoCompra += element.montoTotal;
         if (j < pedidos.length - 1) {
           // obtener los dias entre dos fechas
-          let fecha1 = new Date(element.fecha);
-          let fecha2 = new Date(pedidos[j + 1].fecha);
+          let fecha1 = new Date(element.fecha.slice(0, 10).toString());
+          let fecha2 = new Date(pedidos[j + 1].fecha.slice(0, 10).toString());
           // obtenemos los milisegundos de cada fecha
           let diff = Math.abs(fecha1.getTime() - fecha2.getTime());
           // obtenemos los dias
@@ -85,7 +85,8 @@ class UserController {
           diasAcumulados += dias;
         }
       }
-      const promedioCompra = montoCompra / pedidos.length;
+      // mostrar el promedio de compra con solo dos decimales
+      const promedioCompra = Math.round((montoCompra / pedidos.length) * 100) / 100;;
       const promedioDias = diasAcumulados / pedidos.length;
 
       let newCliente = {

@@ -110,8 +110,8 @@ class UserController {
     if (!prospecto) {
       throw boom.notFound('Prospecto not found');
     }
-    const contactos = await contacto.find({ prospectoId: prospecto._id })/* .populate('empleadoId').populate('prospectoId') */;
-    return contactos;
+    const contactos = await contacto.find({ prospectoId: prospecto._id }).populate('prospectoId');
+    return { contactos, prospecto };
   }
 }
 
