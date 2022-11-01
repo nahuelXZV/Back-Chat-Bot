@@ -19,7 +19,7 @@ mongoose(); // Connect to database
 // Rutas
 app.use(bodyParser.json()); // Parse JSON bodies
 require('./libs/auth'); // Load auth
-app.use(cors(corsOptions)); // Enable CORS
+// app.use(cors(corsOptions)); // Enable CORS
 
 //require('./libs/auth'); // Load auth
 app.get('/', (req, res) => res.send('The chat bot is working correctly!'));

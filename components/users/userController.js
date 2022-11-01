@@ -69,7 +69,7 @@ class UserController {
   }
 
   async findByEmailAuth(email) {
-    const rta = await model.findOne({ email }).populate('empleadoId');
+    const rta = await model.findOne({ email: email });
     return rta;
   }
 
