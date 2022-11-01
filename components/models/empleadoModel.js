@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const mySchema = new Schema({
+const mySchema = new Schema({  
   nombre: {
     allowNull: true,
     type: String,

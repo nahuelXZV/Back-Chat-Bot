@@ -17,11 +17,14 @@ class AuthController {
     if (!isMatch) {
       return {error: "password"};
     }
+
+    const empleado = await controller.findByIdEmp(user.empleadoId);
+    console.log(empleado);
     // eliminar el campo password de la respuesta
     let newUser = {
       id: user._id,
-      email: user.email,
-      role: user.role,
+      nombre: empleado.nombre,
+      email: user.email,      
       createdAt: user.createdAt,      
       //tipo: user.tipo,
       //empleadoId: user.empleadoId,

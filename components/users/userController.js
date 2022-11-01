@@ -90,6 +90,11 @@ class UserController {
     return rta;
   }
 
+  async findByIdEmp(id_empleado) {    
+    const rta = await empleado.findOne({ _id: id_empleado });    
+    return rta;
+  }
+
   async getAll() {
     const users = await model.find({}, { password: 0, recoveryToken: 0 });
     return users;
