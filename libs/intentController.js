@@ -263,10 +263,10 @@ async function pizzaEspecifica(response, facebookId) {
 async function pedido(response, facebookId) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const cantidad = await response.parameters?.fields?.number?.numberValue;
-  const tamano = await response.parameters?.fields?.TamanoPizza?.stringValue;
+  const tamanoDF = await response.parameters?.fields?.TamanoPizza?.stringValue;
   let cant = parseInt(cantidad);
   // validar que exista la pizza
-  const pizzaDB = await pizza.findOne({ nombre: pizzaDF, tamano: tamano });
+  const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
   const client = await cliente.findOne({ FacebookId: facebookId });
   let cesta;
@@ -277,51 +277,57 @@ async function pedido(response, facebookId) {
   }
 
   if (person && pizzaDB) {
-    //Existe pizza y prospecto
-    const clienteDB = await cliente.findOne({ prospectoId: person._id });
-    if (!cesta) {
-      //no existe el carrito
-      if (clienteDB) {
-        //es cliente
-        cesta = await carrito.create({
-          montoTotal: 0,
-          fecha: new Date().toLocaleString('es-ES', {
-            timeZone: 'America/La_Paz',
-          }),
-          clienteId: clienteDB._id,
-        });
+    const pizzaT = await pizza.findOne({ nombre: pizzaDF, tamano: tamanoDF });
+    if (pizzaT) {
+      //Existe pizza y prospecto
+      const clienteDB = await cliente.findOne({ prospectoId: person._id });
+      if (!cesta) {
+        //no existe el carrito
+        if (clienteDB) {
+          //es cliente
+          cesta = await carrito.create({
+            montoTotal: 0,
+            fecha: new Date().toLocaleString('es-ES', {
+              timeZone: 'America/La_Paz',
+            }),
+            clienteId: clienteDB._id,
+          });
+        } else {
+          //es prospecto
+          cesta = await carrito.create({
+            montoTotal: 0,
+            fecha: new Date().toLocaleString('es-ES', {
+              timeZone: 'America/La_Paz',
+            }),
+            prospectoId: person._id,
+          });
+        }
+      }
+      //creando el detalle
+      let precio = cant * pizzaT.precio;
+      const detalleDB = await detalle_carrito.findOne({ carritoId: cesta._id, pizzaId: pizzaT._id });
+      if (detalleDB) {
+        precio = precio + detalleDB.precio;
+        cant = cant + detalleDB.cantidad;
+        await detalleDB.updateOne({ precio: precio, cantidad: cant });
       } else {
-        //es prospecto
-        cesta = await carrito.create({
-          montoTotal: 0,
-          fecha: new Date().toLocaleString('es-ES', {
+        await detalle_carrito.create({
+          cantidad: cant,
+          precio: precio,
+          pizzaId: pizzaT._id,
+          carritoId: cesta._id,
+          createdAt: new Date().toLocaleString('es-ES', {
             timeZone: 'America/La_Paz',
           }),
-          prospectoId: person._id,
         });
       }
-    }
-    //creando el detalle
-    let precio = cant * pizzaDB.precio;
-    const detalleDB = await detalle_carrito.findOne({ carritoId: cesta._id, pizzaId: pizzaDB._id });
-    if (detalleDB) {
-      precio = precio + detalleDB.precio;
-      cant = cant + detalleDB.cantidad;
-      await detalleDB.updateOne({ precio: precio, cantidad: cant });
+      //actualizando monto carrito
+      let monto = cesta.montoTotal + precio;
+      await carrito.findByIdAndUpdate({ _id: cesta._id }, { montoTotal: monto });
     } else {
-      await detalle_carrito.create({
-        cantidad: cant,
-        precio: precio,
-        pizzaId: pizzaDB._id,
-        carritoId: cesta._id,
-        createdAt: new Date().toLocaleString('es-ES', {
-          timeZone: 'America/La_Paz',
-        }),
-      });
+      //no existe ese tamaño
+      return response.fulfillmentText;
     }
-    //actualizando monto carrito
-    let monto = cesta.montoTotal + precio;
-    await carrito.findByIdAndUpdate({ _id: cesta._id }, { montoTotal: monto });
   } else {
     //no existe pizza
     return 'Lo sentimos no tenemos esa pizza';
