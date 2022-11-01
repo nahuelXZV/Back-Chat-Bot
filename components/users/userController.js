@@ -3,7 +3,7 @@ const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
 
 class UserController {
-  constructor() {}
+  constructor() { }
 
   async add(data) {
     // encrypt password
@@ -69,7 +69,7 @@ class UserController {
   }
 
   async findByEmailAuth(email) {
-    const rta = await model.findOne({ email });
+    const rta = await model.findOne({ email }).populate('empleadoId');
     return rta;
   }
 
