@@ -263,13 +263,10 @@ async function pizzaEspecifica(response, facebookId) {
 async function pedido(response, facebookId) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
   const cantidad = await response.parameters?.fields?.number?.numberValue;
-  const c = await response.parameters?.fields?.TamanoPizza;
-  //let cant = parseInt(cantidad);
-  console.log(JSON.stringify(c));
-
-  return `La respuesta es: ${JSON.stringify(c)}`;
+  const tamano = await response.parameters?.fields?.TamanoPizza?.stringValue;
+  let cant = parseInt(cantidad);
   // validar que exista la pizza
-  const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
+  const pizzaDB = await pizza.findOne({ nombre: pizzaDF, tamano: tamano });
   const person = await prospecto.findOne({ facebookId: facebookId });
   const client = await cliente.findOne({ FacebookId: facebookId });
   let cesta;
@@ -306,15 +303,22 @@ async function pedido(response, facebookId) {
     }
     //creando el detalle
     let precio = cant * pizzaDB.precio;
-    await detalle_carrito.create({
-      cantidad: cant,
-      precio: precio,
-      pizzaId: pizzaDB._id,
-      carritoId: cesta._id,
-      createdAt: new Date().toLocaleString('es-ES', {
-        timeZone: 'America/La_Paz',
-      }),
-    });
+    const detalleDB = await detalle_carrito.findOne({ carritoId: cesta._id, pizzaId: pizzaDB._id });
+    if (detalleDB) {
+      precio = precio + detalleDB.precio;
+      cant = cant + detalleDB.cantidad;
+      await detalleDB.updateOne({ precio: precio, cantidad: cant });
+    } else {
+      await detalle_carrito.create({
+        cantidad: cant,
+        precio: precio,
+        pizzaId: pizzaDB._id,
+        carritoId: cesta._id,
+        createdAt: new Date().toLocaleString('es-ES', {
+          timeZone: 'America/La_Paz',
+        }),
+      });
+    }
     //actualizando monto carrito
     let monto = cesta.montoTotal + precio;
     await carrito.findByIdAndUpdate({ _id: cesta._id }, { montoTotal: monto });
