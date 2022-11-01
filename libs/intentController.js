@@ -304,12 +304,12 @@ async function pedido(response, facebookId) {
         }
       }
       //creando el detalle
-      let precio = cant * pizzaT.precio;
+      const precio = cant * pizzaT.precio;
       const detalleDB = await detalle_carrito.findOne({ carritoId: cesta._id, pizzaId: pizzaT._id });
       if (detalleDB) {
-        precio = precio + detalleDB.precio;
+        const precio1 = precio + detalleDB.precio;
         cant = cant + detalleDB.cantidad;
-        await detalleDB.updateOne({ precio: precio, cantidad: cant });
+        await detalleDB.updateOne({ precio: precio1, cantidad: cant });
       } else {
         await detalle_carrito.create({
           cantidad: cant,
