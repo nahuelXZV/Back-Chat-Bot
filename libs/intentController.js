@@ -266,7 +266,8 @@ async function pedido(response, facebookId) {
   const c = await response.parameters?.fields?.TamanoPizza;
   //let cant = parseInt(cantidad);
   console.log(JSON.stringify(c));
-  return 'C';
+
+  return `La respuesta es: ${JSON.stringify(c)}`;
   // validar que exista la pizza
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
