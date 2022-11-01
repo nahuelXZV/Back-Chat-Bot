@@ -15,7 +15,8 @@ router.post(
   async (req, res, next) => {
     try {
       const user = req.user;
-      const data = controller.signToken(user);
+      const data = await controller.signToken(user);
+      console.log(data);
       response.success(req, res, data, 200);
     } catch (error) {
       next(error);
