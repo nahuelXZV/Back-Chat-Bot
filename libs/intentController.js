@@ -96,7 +96,7 @@ async function intentController(result, facebookId) {
 }
 
 async function catalogo(response, facebookId) {
-  const dataDB = await pizza.find().limit(5);
+  const dataDB = await pizza.find({tamano: 'Grande'}).limit(5);
   let pizzas = '';
   let images = [];
   dataDB.forEach((pizza) => {
