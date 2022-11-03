@@ -17,6 +17,8 @@ class UserController {
       telefono: data.telefono,
       createdAt: new Date(),
     });
+    // guardamos el empleado
+    const empleadoSaved = await emplead.save();
     const user = {
       email: data.email,
       password: hash,
@@ -36,7 +38,7 @@ class UserController {
       role: newUser.role,
       createdAt: newUser.createdAt,
       tipo: newUser.tipo,
-      empleadoId: emplead,
+      empleadoId: empleadoSaved,
     };
     return userCreated;
   }
