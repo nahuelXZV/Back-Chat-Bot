@@ -33,11 +33,15 @@ class UserController {
 
     //sacamos el password y el recoveryToken del newUser
     const userCreated = {
-      id: newUser._id,
-      email: newUser.email,
-      role: newUser.role,
-      createdAt: newUser.createdAt,
-      tipo: newUser.tipo,
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        role: newUser.role,
+        createdAt: newUser.createdAt,
+        tipo: newUser.tipo,
+        empleadoId: newUser.empleadoId,
+        clienteId: newUser.clienteId,
+      },
       empleado: empleadoSaved,
     };
     return userCreated;
