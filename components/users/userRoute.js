@@ -44,7 +44,7 @@ router.get(
 
 router.post(
   '/',
-  validatorHandler(addUserSchema, 'body'),
+  // validatorHandler(addUserSchema, 'body'),
   async (req, res, next) => {
     try {
       const body = req.body; //used for getting the body

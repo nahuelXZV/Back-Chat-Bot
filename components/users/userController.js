@@ -1,4 +1,5 @@
 const model = require('./userModel');
+const empleado = require('../models/empleadoModel');
 const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
 
@@ -6,12 +7,23 @@ class UserController {
   constructor() { }
 
   async add(data) {
+    console.log(data);
     // encrypt password
     const hash = await bcrypt.hash(data.password, 10);
     // creamos la estructura del usuario
+    const emplead = new empleado({
+      nombre: data.nombre,
+      direccion: data.direccion,
+      telefono: data.telefono,
+      createdAt: new Date(),
+    });
     const user = {
-      ...data,
+      email: data.email,
       password: hash,
+      empleadoId: emplead._id,
+      clienteId: null,
+      tipo: 'empleado',
+      createdAt: new Date(),
     };
     // creamos el usuario
     const newUser = new model(user);
@@ -24,6 +36,7 @@ class UserController {
       role: newUser.role,
       createdAt: newUser.createdAt,
       tipo: newUser.tipo,
+      empleadoId: emplead,
     };
     return userCreated;
   }
