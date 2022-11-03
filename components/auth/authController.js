@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
-
+const empleado = require('../models/empleadoModel');
 const controller = new UserController();
 
 class AuthController {
@@ -33,16 +33,19 @@ class AuthController {
     return newUser;
   }
 
-  signToken(user) {
+  async signToken(user) {
     const payload = {
       // payload is the data that will be encrypted
       sub: user.id,
       role: user.role,
     };
     const token = jwt.sign(payload, config.JWT_AUTH); // sign the payload with the secret key
+    const emplea = await empleado.findOne({ _id: user.empleadoId });
+    console.log(emplea);
     return {
       user,
       token,
+      empleado: emplea,
     };
   }
 

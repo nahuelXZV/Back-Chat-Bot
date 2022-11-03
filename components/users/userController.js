@@ -4,7 +4,7 @@ const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
 
 class UserController {
-  constructor() {}
+  constructor() { }
 
   async add(data) {        
     const userexist = await this.findByEmailAuth(data.email);    
@@ -86,7 +86,7 @@ class UserController {
   }
 
   async findByEmailAuth(email) {
-    const rta = await model.findOne({ email });
+    const rta = await model.findOne({ email: email });
     return rta;
   }
 

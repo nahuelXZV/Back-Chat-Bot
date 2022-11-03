@@ -14,11 +14,18 @@ router.post(
   //passport.authenticate('local', { session: false }), // passport authenticate
   async (req, res, next) => {
     try {
+<<<<<<< HEAD
       const user = req.body;         
       //const data = controller.signToken(user);      
       const data = await controller.getUser(user.email, user.password);  
       console.log(data);     
       res.send(data);            
+=======
+      const user = req.user;
+      const data = await controller.signToken(user);
+      console.log(data);
+      response.success(req, res, data, 200);
+>>>>>>> d2b220b44b7aa6019c607be922ec96aeff919cda
     } catch (error) {
       console.log("error");
       next(error);
