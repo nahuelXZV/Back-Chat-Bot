@@ -22,7 +22,7 @@ class UserController {
     const user = {
       email: data.email,
       password: hash,
-      empleado: emplead._id,
+      empleadoId: emplead._id,
       clienteId: null,
       tipo: 'empleado',
       createdAt: new Date(),
@@ -38,7 +38,7 @@ class UserController {
       role: newUser.role,
       createdAt: newUser.createdAt,
       tipo: newUser.tipo,
-      empleadoId: empleadoSaved,
+      empleado: empleadoSaved,
     };
     return userCreated;
   }
