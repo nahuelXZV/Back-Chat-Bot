@@ -6,43 +6,45 @@ const bcrypt = require('bcrypt');
 class UserController {
   constructor() { }
 
-  async add(data) {        
-    const userexist = await this.findByEmailAuth(data.email);    
-    if (!userexist) {      
-      if(data.password.length < 8){
-        return {error: "password"};
-      }
-      // encrypt password    
-      const hash = await bcrypt.hash(data.password, 10);      
-      // creamos la estructura del usuario
-      const emp = {
-        nombre: data.nombre,
-        direccion: data.direccion,
-        telefono: data.telefono,      
-      };
-      //creamos el empleado
-      const newEmpleado = new empleado(emp);
-      newEmpleado.save();
-      // creamos la estructura del usuario
-      const user = {
-        email: data.email,
-        password: hash,   
-        empleadoId: newEmpleado._id,   
-      };
-      // creamos el usuario
-      const newUser = new model(user);
-      newUser.save();    
-      //sacamos el password y el recoveryToken del newUser
-      const userCreated = {
+  async add(data) {
+    console.log(data);
+    // encrypt password
+    const hash = await bcrypt.hash(data.password, 10);
+    // creamos la estructura del usuario
+    const emplead = new empleado({
+      nombre: data.nombre,
+      direccion: data.direccion,
+      telefono: data.telefono,
+      createdAt: new Date(),
+    });
+    // guardamos el empleado
+    const empleadoSaved = await emplead.save();
+    const user = {
+      email: data.email,
+      password: hash,
+      empleadoId: emplead._id,
+      clienteId: null,
+      tipo: 'empleado',
+      createdAt: new Date(),
+    };
+    // creamos el usuario
+    const newUser = new model(user);
+    newUser.save();
+
+    //sacamos el password y el recoveryToken del newUser
+    const userCreated = {
+      user: {
         id: newUser._id,
-        nombre: newEmpleado.nombre,
-        email: newUser.email,        
-        createdAt: newUser.createdAt,        
-      };    
-      return userCreated;
-    } else {      
-      return {error: "email"};
-    }
+        email: newUser.email,
+        role: newUser.role,
+        createdAt: newUser.createdAt,
+        tipo: newUser.tipo,
+        empleadoId: newUser.empleadoId,
+        clienteId: newUser.clienteId,
+      },
+      empleado: empleadoSaved,
+    };
+    return userCreated;
   }
 
   async edit(data, id) {
