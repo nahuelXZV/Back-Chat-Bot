@@ -5,6 +5,7 @@ const testRouter = require('../components/test/testRoute');
 const pedidoRouter = require('../components/pedidos/pedidoRoute');
 const prospectoRouter = require('../components/prospecto/prospectoRoute');
 const clienteRouter = require('../components/clientes/clienteRoute');
+const promoRouter = require('../components/promociones/promocionesRoute');
 const express = require('express');
 
 function mainRouter(app) {
@@ -18,6 +19,7 @@ function mainRouter(app) {
   router.use('/pedidos', pedidoRouter); //use the pedidoRouter
   router.use('/prospectos', prospectoRouter); //use the prospectoRouter
   router.use('/clientes', clienteRouter); //use the clienteRouter
+  router.use('/promociones', promoRouter); //use the promoRouter
 }
 
 module.exports = mainRouter;
