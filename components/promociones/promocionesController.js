@@ -1,6 +1,8 @@
 const model = require('../models/promocionModel');
 const detalle = require('../models/pizza_promoModel');
 const pizza = require('../models/pizzaModel');
+const prospectos = require('../models/prospectoModel');
+const cliente = require('../models/clienteModel');
 const boom = require('@hapi/boom');
 
 class PromocionesController {
@@ -75,7 +77,6 @@ class PromocionesController {
 
   // optener una promo por id
   async find(id) {
-    let pizza_promo = [];
     const ModelFound = await model.findOne({ _id: id });
     if (!ModelFound) {
       throw boom.notFound('Promo not found');
@@ -91,7 +92,6 @@ class PromocionesController {
     return promocion;
   }
 
-  // obtener todos los datos del pedido (detalles, pizzas y cliente)
   async getAll() {
     let listaPedido = [];
     const promos = await model.find();
@@ -112,6 +112,25 @@ class PromocionesController {
   async getAllPizzas() {
     const pizzas = await pizza.find();
     return pizzas;
+  }
+
+  async notificar(id) {
+    const ModelFound = await model.findOne({ _id: id });
+    if (!ModelFound) {
+      throw boom.notFound('Promo not found');
+    }
+    const detalles = await detalle
+      .find({ promocionId: ModelFound._id })
+      .populate('pizzaId');
+
+    // recuperar los clientes que tengan correo
+    const clientes = await cliente.find({ correo: { $ne: null } });
+    let promocion = {
+      promo: ModelFound,
+      detalles: detalles,
+      clientes: clientes,
+    };
+    return promocion;
   }
 }
 

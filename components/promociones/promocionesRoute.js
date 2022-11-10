@@ -13,6 +13,16 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/notificar/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params; //used for getting the parameter
+    const model = await controller.notificar(id);
+    response.success(req, res, model, 200);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/pizzas', async (req, res, next) => {
   try {
     const model = await controller.getAllPizzas();
