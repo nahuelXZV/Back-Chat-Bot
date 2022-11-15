@@ -114,8 +114,8 @@ class PromocionesController {
     return pizzas;
   }
 
-  async notificar(id) {
-    const ModelFound = await model.findOne({ _id: id });
+  async notificar() {
+    const ModelFound = await model.findOne().sort({ _id: -1 });
     if (!ModelFound) {
       throw boom.notFound('Promo not found');
     }

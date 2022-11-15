@@ -13,10 +13,9 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/notificar/:id', async (req, res, next) => {
+router.get('/notificar', async (req, res, next) => {
   try {
-    const { id } = req.params; //used for getting the parameter
-    const model = await controller.notificar(id);
+    const model = await controller.notificar();
     response.success(req, res, model, 200);
   } catch (error) {
     next(error);
