@@ -4,6 +4,7 @@ const pizza = require('../models/pizzaModel');
 const prospectos = require('../models/prospectoModel');
 const cliente = require('../models/clienteModel');
 const boom = require('@hapi/boom');
+const notificar = require('../models/cliente_notificarModel');
 
 class PromocionesController {
   constructor() { }
@@ -26,6 +27,9 @@ class PromocionesController {
         new detalle(newDetalle).save();
       }
     }
+    // publicar promocione en facebook mediiante la api de facebook
+
+
     return newPromo;
   }
 
@@ -92,6 +96,18 @@ class PromocionesController {
     return promocion;
   }
 
+  async notificaciones(id) {
+    const ModelFound = await notificar.find({ clienteId: id }).populate('promocionId');
+    if (!ModelFound) {
+      throw boom.notFound('Notificaciones not found');
+    }
+
+    let notificacion = {
+      notificaciones: ModelFound,
+    };
+    return notificacion;
+  }
+
   async getAll() {
     let listaPedido = [];
     const promos = await model.find();
@@ -125,6 +141,18 @@ class PromocionesController {
 
     // recuperar los clientes que tengan correo
     const clientes = await cliente.find({ correo: { $ne: null } });
+
+    // crear notificacion
+    for (let i = 0; i < clientes.length; i++) {
+      const cliente = clientes[i];
+      await notificar.create({
+        clienteId: cliente._id,
+        promocionId: ModelFound._id,
+        fecha: new Date().toLocaleString('es-ES', {
+          timeZone: 'America/La_Paz',
+        }),
+      });
+    };
     let promocion = {
       promo: ModelFound,
       detalles: detalles,

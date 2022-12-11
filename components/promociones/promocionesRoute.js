@@ -22,6 +22,8 @@ router.get('/notificar', async (req, res, next) => {
   }
 });
 
+
+
 router.get('/pizzas', async (req, res, next) => {
   try {
     const model = await controller.getAllPizzas();
@@ -42,6 +44,19 @@ router.get('/:id', async (req, res, next) => {
       next(err);
     });
 });
+
+router.get('/notificaciones/:id', async (req, res, next) => {
+  const { id } = req.params; //used for getting the parameter
+  await controller
+    .notificaciones(id)
+    .then((data) => {
+      response.success(req, res, data, 200);
+    })
+    .catch((err) => {
+      next(err);
+    });
+});
+
 
 router.post('/', async (req, res, next) => {
   try {

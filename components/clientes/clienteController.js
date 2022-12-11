@@ -1,6 +1,7 @@
 const boom = require('@hapi/boom');
 const model = require('../models/clienteModel');
 const pedido = require('../models/pedidoModel');
+const notificar = require('../models/cliente_notificarModel');
 const prospectoIngreso = require('../models/prospecto_ingresoModel');
 const pedidoPizza = require('../models/pedido_pizzaModel');
 const prospecto = require('../models/prospectoModel');
@@ -88,7 +89,9 @@ class UserController {
       // mostrar el promedio de compra con solo dos decimales
       const promedioCompra = Math.round((montoCompra / pedidos.length) * 100) / 100;;
       const promedioDias = diasAcumulados / pedidos.length;
-
+      const notify = await notificar.find({
+        clienteId: person._id,
+      });
       let newCliente = {
         cliente: person,
         prospecto: prosp,
@@ -98,7 +101,7 @@ class UserController {
         ingresos: ingresos.length,
         promedioCompra: promedioCompra,
         frecuencia: promedioDias,
-        notificaciones: 0,
+        notificaciones: notify.length,
       };
       listaClientes.push(newCliente);
     }
