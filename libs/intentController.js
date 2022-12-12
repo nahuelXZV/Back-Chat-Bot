@@ -504,24 +504,35 @@ async function getPerfil(facebookId, intent) {
     });
     await prospecto_ingreso.create({
       prospectoId: prosp._id,
-      fecha: date.slice(0, 13) + ':00:00'
+      fecha: date.slice(0, 17),
     });
   } else {
-    const ingreso = await prospecto_ingreso.findOne({
-      prospectoId: user._id,
-      fecha: date.slice(0, 13) + ':00:00',
-    });
-    if (!ingreso) {
+    // const ingreso = await prospecto_ingreso.findOne({
+    // prospectoId: user._id,
+    // fecha: date.slice(0, 17),
+    // });
+    // obtener el ultimo ingreso del usuario
+    const ingreso = await prospecto_ingreso.findOne({ prospectoId: user._id }).sort({ _id: -1 });
+
+    const datenow = new Date().toLocaleString('es-ES', { timeZone: 'America/La_Paz' }).slice(16, 17);
+    const dateingreso = ingreso.fecha.slice(16, 17);
+    // convertir string a numero
+    const datenow2 = parseInt(datenow);
+    const dateingreso2 = parseInt(dateingreso);
+    console.log(datenow2);
+    console.log(dateingreso2);
+
+    if (datenow2 != (dateingreso2 + 15)) {
       await prospecto_ingreso.create({
         prospectoId: user._id,
-        fecha: date.slice(0, 13) + ':00:00',
+        fecha: date.slice(0, 17),
       });
       return
     }
     if (intent == 'Default Welcome Intent') {
       await prospecto_ingreso.create({
         prospectoId: user._id,
-        fecha: date.slice(0, 13) + ':00:00',
+        fecha: date.slice(0, 17),
       });
     }
   }
