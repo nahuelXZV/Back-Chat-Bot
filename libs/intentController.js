@@ -16,7 +16,7 @@ const axios = require('axios');
 
 async function intentController(result, facebookId) {
   let request_body = {};
-  await getPerfil(facebookId);
+  await getPerfil(facebookId, result.intent.displayName);
   switch (result.intent.displayName) {
     // depende del intent que se detecte se ejecutara una funcion
     case 'catalogo':
@@ -96,7 +96,7 @@ async function intentController(result, facebookId) {
 }
 
 async function catalogo(response, facebookId) {
-  const dataDB = await pizza.find({tamano: 'Grande'}).limit(5);
+  const dataDB = await pizza.find({ tamano: 'Grande' }).limit(5);
   let pizzas = '';
   let images = [];
   dataDB.forEach((pizza) => {
@@ -487,37 +487,41 @@ async function sendImages(request_body, facebookId) {
   });
 }
 
-async function getPerfil(facebookId) {
+async function getPerfil(facebookId, intent) {
   // obtener datos del perfil de facebook
   const url = `https://graph.facebook.com/v14.0/${facebookId}?fields=first_name,last_name,email,profile_pic&access_token=${config.KEY_FACEBOOK}`;
   const perfil = await axios.get(url);
-  console.log(perfil.data);
   user = await prospecto.findOne({ facebookId: facebookId });
+  const date = new Date().toLocaleString('es-ES', { timeZone: 'America/La_Paz' });
+  console.log(date);
+
   if (!user) {
-    await prospecto.create({
+    const prosp = await prospecto.create({
       facebookId: facebookId,
       nombre: perfil.data.first_name + ' ' + perfil.data.last_name,
       foto: perfil.data.profile_pic,
-      fecha: new Date().toLocaleString('es-ES', {
-        timeZone: 'America/La_Paz',
-      }),
+      fecha: date,
+    });
+    await prospecto_ingreso.create({
+      prospectoId: prosp._id,
+      fecha: date.slice(0, 13) + ':00:00'
     });
   } else {
-    // buscar en prospecto_ingreso si hay una fecha de ingreso y solo hora de hoy bolivia
-    const date =
-      new Date()
-        .toLocaleString('es-ES', {
-          timeZone: 'America/La_Paz',
-        })
-        .slice(0, 14) + ':00:00';
     const ingreso = await prospecto_ingreso.findOne({
       prospectoId: user._id,
-      fecha: date,
+      fecha: date.slice(0, 13) + ':00:00',
     });
     if (!ingreso) {
       await prospecto_ingreso.create({
         prospectoId: user._id,
-        fecha: date,
+        fecha: date.slice(0, 13) + ':00:00',
+      });
+      return
+    }
+    if (intent == 'Default Welcome Intent') {
+      await prospecto_ingreso.create({
+        prospectoId: user._id,
+        fecha: date.slice(0, 13) + ':00:00',
       });
     }
   }
