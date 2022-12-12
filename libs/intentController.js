@@ -514,8 +514,8 @@ async function getPerfil(facebookId, intent) {
     // obtener el ultimo ingreso del usuario
     const ingreso = await prospecto_ingreso.findOne({ prospectoId: user._id }).sort({ _id: -1 });
 
-    const datenow = new Date().toLocaleString('es-ES', { timeZone: 'America/La_Paz' }).slice(15, 16);
-    const dateingreso = ingreso.fecha.slice(15, 16);
+    const datenow = new Date().toLocaleString('es-ES', { timeZone: 'America/La_Paz' }).slice(14, 16);
+    const dateingreso = ingreso.fecha.slice(14, 16);
     // convertir string a numero
     const datenow2 = parseInt(datenow);
     const dateingreso2 = parseInt(dateingreso);
