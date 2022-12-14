@@ -513,7 +513,6 @@ async function getPerfil(facebookId, intent) {
     // });
     // obtener el ultimo ingreso del usuario
     const ingreso = await prospecto_ingreso.findOne({ prospectoId: user._id }).sort({ _id: -1 });
-
     const datenow = new Date().toLocaleString('es-ES', { timeZone: 'America/La_Paz' }).slice(15, 17);
     const dateingreso = ingreso.fecha.slice(15, 17);
     // convertir string a numero
@@ -522,7 +521,7 @@ async function getPerfil(facebookId, intent) {
     console.log(datenow2);
     console.log(dateingreso2);
 
-    if (datenow2 != (dateingreso2 + 15)) {
+    if (datenow2 > (dateingreso2 + 20)) {
       await prospecto_ingreso.create({
         prospectoId: user._id,
         fecha: date.slice(0, 17),
