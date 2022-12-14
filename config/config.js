@@ -10,6 +10,7 @@ const config = {
 
   KEY_FACEBOOK: process.env.KEY_FACEBOOK || 'key',
   KEY_VALIDATION: process.env.KEY_VALIDATION || 'key',
+  TOKEN_POST: process.env.TokenPost || 'key',
 
   PROYECT_ID: process.env.PROYECT_ID || '',
   GOOGLE_APPLICATION_CREDENTIALS:

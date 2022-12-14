@@ -5,6 +5,8 @@ const prospectos = require('../models/prospectoModel');
 const cliente = require('../models/clienteModel');
 const boom = require('@hapi/boom');
 const notificar = require('../models/cliente_notificarModel');
+const axios = require('axios');
+const config = require('../../config/config');
 
 class PromocionesController {
   constructor() { }
@@ -16,6 +18,8 @@ class PromocionesController {
     } */
     const newPromo = new model(data.promo);
     newPromo.save();
+    let imagen = 'https://www.lavanguardia.com/files/og_thumbnail/files/fp/uploads/2021/03/30/6063031b90a87.r_d.1083-871-0.jpeg';
+    const message = "NUEVA PROMOCION!!!\r\n" + data.promo.nombre + "\r\n" + data.promo.descripcion;
     if (data.detalles.length > 0) {
       for (let i = 0; i < data.detalles.length; i++) {
         const detalle_promo = data.detalles[i];
@@ -25,11 +29,15 @@ class PromocionesController {
           createdAt: new Date(),
         }
         new detalle(newDetalle).save();
+        if (i === 0) {
+          const pzz = await pizza.findOne({ _id: detalle_promo.pizzaId });
+          imagen = pzz.imagen;
+        }
       }
     }
     // publicar promocione en facebook mediiante la api de facebook
-
-
+    const url = `https://graph.facebook.com/107564425413200/photos?message=${message}&access_token=${config.TOKEN_POST}&url=${imagen}`;
+    await axios.post(url);
     return newPromo;
   }
 
