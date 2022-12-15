@@ -11,10 +11,13 @@ class UserController {
     const message = event.message;
     const messageAttachments = event.attachments;
 
-    if (message.text) {
+    if (message.text) {      
       var response = {
         text: 'Enviaste este mensaje: ' + message.text,
       };
+      if (messageAttachments=="pizzaEspecifica"){
+        response= {text: 'No hay esa pizza'}; 
+      }
     } else if (messageAttachments) {
       var response = {
         text: 'Enviaste un adjunto',
