@@ -283,6 +283,7 @@ async function pedido(response, facebookId) {
 
   if (person && pizzaDB) {
     const pizzaT = await pizza.findOne({ nombre: pizzaDF, tamano: tamanoDF });
+    return 'Lo sentimos no tenemos esa pizza';
     if (pizzaT) {
       //Existe pizza y prospecto
       const clienteDB = await cliente.findOne({ prospectoId: person._id });
