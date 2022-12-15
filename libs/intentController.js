@@ -400,7 +400,7 @@ async function precios(response, facebookId) {
   const person = await prospecto.findOne({ facebookId: facebookId });
 
   if(tamanoDF === ""){
-    return res.fulfillmentText;
+    return response.fulfillmentText;
   }
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
