@@ -399,6 +399,9 @@ async function precios(response, facebookId) {
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF, tamano: tamanoDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
 
+  if(tamanoDF === ""){
+    return res.fulfillmentText;
+  }
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
     await prospecto_pizza.create({
