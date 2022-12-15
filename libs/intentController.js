@@ -239,6 +239,8 @@ async function pizzaEspecifica(response, facebookId) {
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
 
+  return 'Lo sentimos no tenemos esa pizza';
+  
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
     await prospecto_pizza.create({
@@ -282,8 +284,7 @@ async function pedido(response, facebookId) {
   }
 
   if (person && pizzaDB) {
-    const pizzaT = await pizza.findOne({ nombre: pizzaDF, tamano: tamanoDF });
-    return 'Lo sentimos no tenemos esa pizza';
+    const pizzaT = await pizza.findOne({ nombre: pizzaDF, tamano: tamanoDF });    
     if (pizzaT) {
       //Existe pizza y prospecto
       const clienteDB = await cliente.findOne({ prospectoId: person._id });
