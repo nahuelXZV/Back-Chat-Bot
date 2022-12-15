@@ -400,21 +400,23 @@ async function precios(response, facebookId) {
   const person = await prospecto.findOne({ facebookId: facebookId });
 
   // guardar la pizza buscada en la base de datos
-  if (person && pizzaDB) {
-    await prospecto_pizza.create({
-      prospectoId: person._id,
-      pizzaId: pizzaDB._id,
-      fecha: new Date().toLocaleString('es-ES', {
-        timeZone: 'America/La_Paz',
-      }),
-    });
-  }
-
-  let detalle;
-  if (pizzaDB) {
-    detalle = `${pizzaDB.precio}Bs.`;
-  } else {
-    return 'Lo siento, no tenemos esa pizza';
+  if(pizzaDF != null && tamanoDF != null){
+    if (person && pizzaDB) {
+      await prospecto_pizza.create({
+        prospectoId: person._id,
+        pizzaId: pizzaDB._id,
+        fecha: new Date().toLocaleString('es-ES', {
+          timeZone: 'America/La_Paz',
+        }),
+      });
+    }
+  
+    let detalle;
+    if (pizzaDB) {
+      detalle = `${pizzaDB.precio}Bs.`;
+    } else {
+      return 'Lo siento, no tenemos esa pizza';
+    }
   }
   const res = response.fulfillmentText.replace('[x]', detalle + '\r\n');
   return res;
