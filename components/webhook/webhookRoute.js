@@ -1,7 +1,7 @@
-const response = require('../../network/response');
 const webhookController = require('./webhookController');
-const express = require('express');
+const response = require('../../network/response');
 const config = require('../../config/config');
+const express = require('express');
 
 const router = express.Router();
 const controller = new webhookController();
@@ -22,10 +22,12 @@ router.post('/', async (req, res, next) => {
   try {
     if (req.body.object === 'page') {
       req.body.entry.forEach(async (entry) => {
+        const idUser = entry.id;
         entry.messaging.forEach(async (event) => {
           if (event.message) {
-            console.log(event.message);
-            await controller.process_event(event);
+            await controller.process_event(event, idUser).catch((error) => {
+              next(error);
+            });
           }
         });
       });

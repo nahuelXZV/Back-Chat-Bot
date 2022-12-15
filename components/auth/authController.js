@@ -1,15 +1,15 @@
 const UserController = require('../users/userController');
 const config = require('../../config/config');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-
+const empleado = require('../models/empleadoModel');
 const controller = new UserController();
 
 class AuthController {
   async getUser(email, password) {
-    const user = await controller.findByEmail(email); // find user by email
+    const user = await controller.findByEmailAuth(email); // find user by email
     if (!user) {
       throw boom.unauthorized();
     }
@@ -17,24 +17,37 @@ class AuthController {
     if (!isMatch) {
       throw boom.unauthorized();
     }
-    return user;
+    // eliminar el campo password de la respuesta
+    let newUser = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+      tipo: user.tipo,
+      empleadoId: user.empleadoId,
+      clienteId: user.clienteId,
+    }
+    return newUser;
   }
 
-  signToken(user) {
+  async signToken(user) {
     const payload = {
       // payload is the data that will be encrypted
       sub: user.id,
       role: user.role,
     };
     const token = jwt.sign(payload, config.JWT_AUTH); // sign the payload with the secret key
+    const emplea = await empleado.findOne({ _id: user.empleadoId });
+    console.log(emplea);
     return {
       user,
       token,
+      empleado: emplea,
     };
   }
 
   async sendRecovery(email) {
-    const user = await controller.findByEmail(email);
+    const user = await controller.findByEmailAuth(email);
     if (!user) {
       throw boom.unauthorized();
     }

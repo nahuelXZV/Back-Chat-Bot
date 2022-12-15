@@ -2,8 +2,8 @@ const validatorHandler = require('../../middleware/validatorHandler');
 const response = require('../../network/response');
 const AuthController = require('./authController');
 const { loginSchema } = require('./authSchema');
-const express = require('express');
 const passport = require('passport');
+const express = require('express');
 
 const router = express.Router();
 const controller = new AuthController();
@@ -15,7 +15,8 @@ router.post(
   async (req, res, next) => {
     try {
       const user = req.user;
-      const data = controller.signToken(user);
+      const data = await controller.signToken(user);
+      console.log(data);
       response.success(req, res, data, 200);
     } catch (error) {
       next(error);

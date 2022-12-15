@@ -1,45 +1,43 @@
-const boom = require('@hapi/boom');
+const intentController = require('../../libs/intentController');
+const dialogflow = require('../../libs/dialog_flow');
+const { error } = require('../../network/response');
 const config = require('../../config/config');
+const boom = require('@hapi/boom');
 const request = require('request');
 
-class UserController {
+class webhookController {
   constructor() {}
 
-  process_event(event) {
+  async process_event(event, idUser) {
     // Capturamos los datos del que genera el evento y el mensaje
     const senderId = event.sender.id;
     const message = event.message;
-    const messageAttachments = event.attachments;
+    let request_body = {};
+    if (message.text) {
+      // Enviando el mensaje al dialogflow
+      const res = await dialogflow
+        .detectIntent(config.PROYECT_ID, senderId, message.text, '', 'es')
+        .catch((error) => {
+          console.log(error);
+        });
 
-    if (message.text) {      
-      var response = {
-        text: 'Enviaste este mensaje: ' + message.text,
-      };
-      if (messageAttachments=="pizzaEspecifica"){
-        response= {text: 'No hay esa pizza'}; 
-      }
-    } else if (messageAttachments) {
-      var response = {
-        text: 'Enviaste un adjunto',
-      };
+      // Aqui editaremos el mensaje de respuesta
+      request_body = await intentController(res, senderId);
+      //------------------------------------------------
     } else {
-      var response = {
-        text: 'No entiendo el mensaje',
+      request_body = {
+        recipient: {
+          id: senderId,
+        },
+        message: {
+          text: 'Lo siento, no entiendo el tipo de archivo que me has enviado. Envíame solo texto.',
+        },
       };
     }
-    this.sendMessage(senderId, response.text);
+    this.sendMessage(request_body);
   }
 
-  async sendMessage(senderId, messageText) {
-    const request_body = {
-      recipient: {
-        id: senderId,
-      },
-      message: {
-        text: messageText,
-      },
-    };
-
+  async sendMessage(request_body) {
     request(
       {
         uri: 'https://graph.facebook.com/v14.0/me/messages',
@@ -56,20 +54,7 @@ class UserController {
         }
       }
     );
-    /*
-    try {
-      await axios({
-        url: 'https://graph.facebook.com/v14.0/me/messages',
-        params: {
-          access_token: config.KEY_FACEBOOK,
-        },
-        method: 'POST',
-        data: request_body,
-      });
-    } catch (error) {
-      boom.badImplementation(error);
-    }*/
   }
 }
 
-module.exports = UserController;
+module.exports = webhookController;

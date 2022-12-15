@@ -1,6 +1,7 @@
 exports.success = function (req, res, data, status) {
   res.status(status || 200).json({
     body: data,
+    status: status,
   });
 };
 
