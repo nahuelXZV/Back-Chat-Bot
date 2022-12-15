@@ -395,7 +395,8 @@ async function confirmacion(response, facebookId) {
 
 async function precios(response, facebookId) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
-  const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
+  const tamanoDF = await response.parameters?.fields?.TamanoPizza?.stringValue;
+  const pizzaDB = await pizza.findOne({ nombre: pizzaDF, tamano: tamanoDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
 
   // guardar la pizza buscada en la base de datos
