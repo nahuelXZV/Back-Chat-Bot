@@ -400,7 +400,7 @@ async function precios(response, facebookId) {
   const person = await prospecto.findOne({ facebookId: facebookId });
 
   // guardar la pizza buscada en la base de datos
-  if(pizzaDF != null && tamanoDF != null){
+  if(pizzaDF != "" && tamanoDF != ""){
     if (person && pizzaDB) {
       await prospecto_pizza.create({
         prospectoId: person._id,
