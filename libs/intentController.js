@@ -265,6 +265,11 @@ async function pedido(response, facebookId) {
   const cantidad = await response.parameters?.fields?.number?.numberValue;
   const tamanoDF = await response.parameters?.fields?.TamanoPizza?.stringValue;
   let cant = parseInt(cantidad);
+
+  if(cantidad === "" || tamanoDF === "" || pizzaDF == ""){
+    return response.fulfillmentText;
+  }
+
   // validar que exista la pizza
   const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
@@ -396,9 +401,13 @@ async function confirmacion(response, facebookId) {
 
 async function precios(response, facebookId) {
   const pizzaDF = await response.parameters?.fields?.TipoPizza?.stringValue;
-  const pizzaDB = await pizza.findOne({ nombre: pizzaDF });
+  const tamanoDF = await response.parameters?.fields?.TamanoPizza?.stringValue;
+  const pizzaDB = await pizza.findOne({ nombre: pizzaDF, tamano: tamanoDF });
   const person = await prospecto.findOne({ facebookId: facebookId });
 
+  if(tamanoDF === ""){
+    return response.fulfillmentText;
+  }
   // guardar la pizza buscada en la base de datos
   if (person && pizzaDB) {
     await prospecto_pizza.create({
